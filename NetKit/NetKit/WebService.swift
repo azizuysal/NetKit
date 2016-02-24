@@ -12,6 +12,7 @@ import Foundation
   optional func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
   optional func downloadTaskWithRequest(request: NSURLRequest, completionHandler: (NSURL?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDownloadTask
   optional func uploadTaskWithRequest(request: NSURLRequest, fromData: NSData?, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionUploadTask
+  optional func invalidateAndCancel()
 }
 extension NSURLSession: SessionTaskSource {}
 
@@ -43,6 +44,10 @@ public class WebService {
   
   private(set) var webDelegate: WebDelegate?
   internal(set) var authenticationHandler: AuthenticationHandler?
+  
+  deinit {
+    taskSource.invalidateAndCancel?()
+  }
   
   public init(urlString: String) {
     self.urlString = urlString
