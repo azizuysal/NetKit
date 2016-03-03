@@ -4,4 +4,3 @@ xcode_workspace: NetKit.xcworkspace
 xcode_scheme:
   - NetKit
   - NetKitExample
-xcode_sdk: iphonesimulator8.1
