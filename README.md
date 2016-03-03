@@ -1,5 +1,5 @@
+[![Language](https://img.shields.io/badge/Swift-2.1-orange.svg)](http://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Language](https://img.shields.io/badge/swift-2.1-orange.svg)](http://swift.org)
 
 # NetKit
 
