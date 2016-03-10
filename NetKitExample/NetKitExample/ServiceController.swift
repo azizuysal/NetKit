@@ -20,14 +20,31 @@ class ServiceController {
   private static let serviceWithDelegate = ServiceWithDelegate()
   private static let weatherService = GlobalWeatherService()
   
-  private static var pollerAuthCounter = 0
-  
-  private static let networkQueue = dispatch_queue_create("networkQueue", DISPATCH_QUEUE_SERIAL)
+  private static let networkQueueSerial = dispatch_queue_create("networkQueueSerial", DISPATCH_QUEUE_SERIAL)
+  private static let networkQueueParallel = dispatch_queue_create("networkQueueParallel", DISPATCH_QUEUE_CONCURRENT)
   
   // MARK: ExampleService
   
+  class func getPostsSync() -> AnyObject {
+    var result: AnyObject = []
+    
+    jsonService.getPosts()
+      .responseJSON { json in
+        result = json
+        notifyUser(JsonService.PostsDownloaded)
+        return .Success
+      }
+      .responseError { error in
+        print(error)
+        notifyUser(JsonService.PostsDownloaded, error: error)
+      }
+      .resumeAndWait(1)
+    
+    return result
+  }
+  
   class func getPosts() {
-    dispatch_sync(networkQueue) {
+    dispatch_sync(networkQueueSerial) {
       jsonService.getPosts()
         .responseJSON { json in
           print(json)
@@ -43,7 +60,7 @@ class ServiceController {
   }
   
   class func addPost(post: Post) {
-    dispatch_sync(networkQueue) {
+    dispatch_async(networkQueueParallel) {
       jsonService.addPost()
         .setJSON(post.toJson())
         .responseJSON { json in
@@ -55,12 +72,12 @@ class ServiceController {
           print(error)
           notifyUser(JsonService.PostsCreated, error: error)
         }
-        .resumeAndWait()
+        .resume()
     }
   }
   
   class func updatePost(post: Post) {
-    dispatch_sync(networkQueue) {
+    dispatch_async(networkQueueParallel) {
       jsonService.updatePost()
         .setPath(String(post.id))
         .setJSON(post.toJson())
@@ -73,40 +90,46 @@ class ServiceController {
           print(error)
           notifyUser(JsonService.PostsUpdated, error: error)
         }
-        .resumeAndWait()
+        .resume()
     }
   }
   
   // MARK: ServiceWithDelegate
   
   class func getComments() {
-    serviceWithDelegate.getComments()
-      .responseJSON { json in
-        print(json)
-        return .Success
-      }
-      .responseError { error in
-        print(error)
-      }
-      .resume()
+    dispatch_sync(networkQueueSerial) {
+      serviceWithDelegate.getComments()
+        .responseJSON { json in
+          print(json)
+          notifyUser(ServiceWithDelegate.CommentsDownloaded)
+          return .Success
+        }
+        .responseError { error in
+          print(error)
+          notifyUser(ServiceWithDelegate.CommentsDownloaded, error: error)
+        }
+        .resume()
+    }
   }
   
   // MARK: GlobalWeatherService
   
   class func getCities(country: String)  {
-    weatherService.getCitiesByCountry()
-      .setURLParameters(["op":"GetCitiesByCountry"])
-      .setSOAP("<GetCitiesByCountry xmlns=\"http://www.webserviceX.NET\"><CountryName>\(country)</CountryName></GetCitiesByCountry>")
-      .response { data, response in
-        print(String(data: data!, encoding: NSUTF8StringEncoding))
-        notifyUser(GlobalWeatherService.ReceivedCities)
-        return .Success
-      }
-      .responseError { error in
-        print(error)
-        notifyUser(GlobalWeatherService.ReceivedCities, error: error)
-      }
-      .resume()
+    dispatch_sync(networkQueueSerial) {
+      weatherService.getCitiesByCountry()
+        .setURLParameters(["op":"GetCitiesByCountry"])
+        .setSOAP("<GetCitiesByCountry xmlns=\"http://www.webserviceX.NET\"><CountryName>\(country)</CountryName></GetCitiesByCountry>")
+        .response { data, response in
+//          print(String(data: data!, encoding: NSUTF8StringEncoding))
+          notifyUser(GlobalWeatherService.ReceivedCities)
+          return .Success
+        }
+        .responseError { error in
+          print(error)
+          notifyUser(GlobalWeatherService.ReceivedCities, error: error)
+        }
+        .resume()
+    }
   }
   
   // MARK: Private methods

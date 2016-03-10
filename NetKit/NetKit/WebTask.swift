@@ -44,6 +44,7 @@ public class WebTask {
   private var taskResult: WebTaskResult?
   
   private var semaphore: dispatch_semaphore_t?
+  private var timeout: Int = 0
   
   deinit {
     handlerQueue.cancelAllOperations()
@@ -81,13 +82,18 @@ extension WebTask {
     urlTask?.resume()
     
     if let semaphore = semaphore {
-      dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+      let time = timeout == 0 ? DISPATCH_TIME_FOREVER : dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Int(NSEC_PER_SEC)))
+      dispatch_semaphore_wait(semaphore, time)
+      if urlTask?.state == .Running {
+        urlTask?.cancel()
+      }
     }
     return self
   }
   
-  public func resumeAndWait() -> Self {
+  public func resumeAndWait(timeout: Int = 0) -> Self {
     semaphore = dispatch_semaphore_create(0)
+    self.timeout = timeout
     return resume()
   }
   
@@ -108,6 +114,7 @@ extension WebTask {
     }
     handlerQueue.suspended = false
     if let semaphore = semaphore {
+      handlerQueue.waitUntilAllOperationsAreFinished()
       dispatch_semaphore_signal(semaphore)
     }
     if let urlTask = urlTask {

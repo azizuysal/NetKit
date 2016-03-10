@@ -70,7 +70,7 @@ class ServiceWithDelegate: NSObject {
   private static let baseURL = "http://localhost:3000/"
   let webService = WebService(urlString: baseURL)
   
-  weak var urlSession: NSURLSession!
+  var urlSession: NSURLSession!
   
   var tasks = [Int:Any]()
   var datas = [Int: NSMutableData?]()
