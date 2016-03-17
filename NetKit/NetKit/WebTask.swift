@@ -46,7 +46,7 @@ public class WebTask {
   private var semaphore: dispatch_semaphore_t?
   private var timeout: Int = 0
   
-  private var authCount = 0
+  private var authCount: Int = 0
   
   deinit {
     handlerQueue.cancelAllOperations()
@@ -187,10 +187,19 @@ extension WebTask {
 extension WebTask {
   
   func authenticate(authenticationMethod: String, completionHandler: WebService.ChallengeCompletionHandler) {
-    if let authenticationHandler = webService?.authenticationHandler, let maxAuth = webService?.maxAuthTries where maxAuth == 0 || authCount++ < maxAuth {
-      taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
-    } else {
+    guard let authenticationHandler = webService?.authenticationHandler else {
       completionHandler(.PerformDefaultHandling, nil)
+      return
+    }
+    
+    if let method = WebService.ChallengeMethod(method: authenticationMethod) where method == .Default || method == .HTTPBasic {
+      if let maxAuth = webService?.maxAuthRetry where maxAuth == 0 || authCount++ < maxAuth {
+        taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
+      } else {
+        completionHandler(.PerformDefaultHandling, nil)
+      }
+    } else {
+      taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
     }
   }
 }

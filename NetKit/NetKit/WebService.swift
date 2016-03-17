@@ -45,7 +45,7 @@ public class WebService {
   private(set) var webDelegate: WebDelegate?
   internal(set) var authenticationHandler: AuthenticationHandler?
   
-  public var maxAuthTries = 0
+  public var maxAuthRetry: Int = 0
   
   deinit {
     taskSource.invalidateAndCancel?()
