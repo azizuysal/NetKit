@@ -51,10 +51,14 @@ public class WebService {
     taskSource.invalidateAndCancel?()
   }
   
-  public init(urlString: String) {
+  public convenience init(urlString: String) {
+    self.init(urlString: urlString, configuration: .defaultSessionConfiguration())
+  }
+  
+  public init(urlString: String, configuration: NSURLSessionConfiguration) {
     self.urlString = urlString
     webDelegate = WebDelegate()
-    taskSource = NSURLSession(configuration: .defaultSessionConfiguration(), delegate: webDelegate, delegateQueue: webQueue)
+    taskSource = NSURLSession(configuration: configuration, delegate: webDelegate, delegateQueue: webQueue)
   }
 }
 
