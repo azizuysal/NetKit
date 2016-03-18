@@ -58,7 +58,7 @@ public class WebService {
   public init(urlString: String, configuration: NSURLSessionConfiguration) {
     self.urlString = urlString
     webDelegate = WebDelegate()
-    taskSource = NSURLSession(configuration: configuration, delegate: webDelegate, delegateQueue: webQueue)
+    taskSource = TaskSource.defaultSource(configuration, delegate: webDelegate, delegateQueue: webQueue)
   }
 }
 
