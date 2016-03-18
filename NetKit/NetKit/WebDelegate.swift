@@ -8,13 +8,13 @@
 
 import Foundation
 
-class WebDelegate: NSObject {
+public class WebDelegate: NSObject {
   
   var tasks = [Int:WebTask]()
 }
 
 extension WebDelegate: NSURLSessionTaskDelegate {
-  func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+  public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
     let webTask = tasks[task.taskIdentifier]
     webTask?.authenticate(challenge.protectionSpace.authenticationMethod, completionHandler: completionHandler)
   }
