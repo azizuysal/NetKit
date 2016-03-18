@@ -24,6 +24,7 @@ public class WebTask {
   
   public typealias ResponseHandler = (NSData?, NSURLResponse?) -> WebTaskResult
   public typealias JSONHandler = (AnyObject) -> WebTaskResult
+  public typealias DownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias ErrorHandler = (ErrorType) -> Void
   
   private let handlerQueue: NSOperationQueue = {
@@ -221,7 +222,6 @@ extension WebTask {
       }
       self.taskResult = handler(self.responseData, self.urlResponse)
     }
-    
     return self
   }
   
@@ -242,6 +242,19 @@ extension WebTask {
     }
   }
   
+  public func responseFile(handler: DownloadHandler) -> Self {
+    handlerQueue.addOperationWithBlock {
+      if let taskResult = self.taskResult {
+        switch taskResult {
+        case .Failure(_): return
+        case .Success: break
+        }
+      }
+      self.taskResult = handler(self.responseURL, self.urlResponse)
+    }
+    return self
+  }
+  
   public func responseError(handler: ErrorHandler) -> Self {
     handlerQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
@@ -251,7 +264,6 @@ extension WebTask {
         }
       }
     }
-    
     return self
   }
 }

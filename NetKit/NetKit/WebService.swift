@@ -63,11 +63,11 @@ extension WebService {
   public func HEAD(path: String) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .HEAD, url: urlString.stringByAppendingPathComponent(path)), webService: self)
   }
-  public func GET(path: String) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .GET, url: urlString.stringByAppendingPathComponent(path)), webService: self)
+  public func GET(path: String, taskType: WebTask.TaskType = .Data) -> WebTask {
+    return WebTask(webRequest: WebRequest(method: .GET, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
   }
-  public func POST(path: String) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .POST, url: urlString.stringByAppendingPathComponent(path)), webService: self)
+  public func POST(path: String, taskType: WebTask.TaskType = .Data) -> WebTask {
+    return WebTask(webRequest: WebRequest(method: .POST, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
   }
   public func PUT(path: String) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .PUT, url: urlString.stringByAppendingPathComponent(path)), webService: self)
