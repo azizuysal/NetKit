@@ -19,7 +19,6 @@ class WebDelegate: NSObject {
 
 extension WebDelegate: NSURLSessionTaskDelegate {
   func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-    print("didReceiveChallenge")
     let webTask = tasks[task.taskIdentifier]
     webTask?.authenticate(challenge.protectionSpace.authenticationMethod, completionHandler: completionHandler)
   }
@@ -27,7 +26,6 @@ extension WebDelegate: NSURLSessionTaskDelegate {
 
 extension WebDelegate: NSURLSessionDelegate {
   func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-    print("didCompleteWithError")
     if task.isKindOfClass(NSURLSessionDataTask) || task.isKindOfClass(NSURLSessionUploadTask) {
       if let handler = handlers[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void, taskData = datas[task.taskIdentifier] {
         handler(taskData, task.response, error)
@@ -45,7 +43,6 @@ extension WebDelegate: NSURLSessionDelegate {
 
 extension WebDelegate: NSURLSessionDataDelegate {
   func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-    print("didReceiveData")
     if let taskData = datas[dataTask.taskIdentifier] {
       taskData?.appendData(data)
     }
@@ -54,7 +51,17 @@ extension WebDelegate: NSURLSessionDataDelegate {
 
 extension WebDelegate: NSURLSessionDownloadDelegate {
   func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-    locations[downloadTask.taskIdentifier] = location
+    do {
+      let tempDir = try NSFileManager.defaultManager().URLForDirectory(.ItemReplacementDirectory, inDomain: .UserDomainMask, appropriateForURL: NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first, create: true)
+      let newLocation = tempDir.URLByAppendingPathComponent(location.lastPathComponent!)
+      if NSFileManager.defaultManager().fileExistsAtPath(newLocation.path!) {
+        try NSFileManager.defaultManager().removeItemAtURL(newLocation)
+      }
+      try NSFileManager.defaultManager().copyItemAtURL(location, toURL: newLocation)
+      locations[downloadTask.taskIdentifier] = newLocation
+    } catch let error as NSError {
+      URLSession(session, task: downloadTask, didCompleteWithError: error)
+    }
   }
 }
 
