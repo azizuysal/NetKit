@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F695A641C9DD0D500D0AA65 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F695A631C9DD0D500D0AA65 /* DownloadService.swift */; };
 		8FA225431C77D09400DE2F9E /* JsonWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225421C77D09400DE2F9E /* JsonWebService.swift */; };
 		8FA225451C77E23800DE2F9E /* ServiceWithDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */; };
 		8FC857071C76976A007F4AEB /* GlobalWeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC857061C76976A007F4AEB /* GlobalWeatherService.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F695A631C9DD0D500D0AA65 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		8FA225421C77D09400DE2F9E /* JsonWebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonWebService.swift; sourceTree = "<group>"; };
 		8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceWithDelegate.swift; sourceTree = "<group>"; };
 		8FC857061C76976A007F4AEB /* GlobalWeatherService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalWeatherService.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				8FA225421C77D09400DE2F9E /* JsonWebService.swift */,
 				8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */,
 				8FC857061C76976A007F4AEB /* GlobalWeatherService.swift */,
+				8F695A631C9DD0D500D0AA65 /* DownloadService.swift */,
 				8FF8E4791C74EF0000A3C042 /* Main.storyboard */,
 				8FF8E47C1C74EF0000A3C042 /* Assets.xcassets */,
 				8FF8E47E1C74EF0000A3C042 /* LaunchScreen.storyboard */,
@@ -160,6 +163,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FF8E4781C74EF0000A3C042 /* ViewController.swift in Sources */,
+				8F695A641C9DD0D500D0AA65 /* DownloadService.swift in Sources */,
 				8FC857071C76976A007F4AEB /* GlobalWeatherService.swift in Sources */,
 				8FA225451C77E23800DE2F9E /* ServiceWithDelegate.swift in Sources */,
 				8FF8E4761C74EF0000A3C042 /* AppDelegate.swift in Sources */,

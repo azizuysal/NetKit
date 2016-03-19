@@ -18,6 +18,7 @@ extension NSURLSession: SessionTaskSource {}
 
 public class WebService {
   
+  public typealias FileDownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias AuthenticationHandler = (ChallengeMethod, ChallengeCompletionHandler) -> WebTaskResult
   public typealias ChallengeCompletionHandler = (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void
   public enum ChallengeMethod: String {
@@ -45,6 +46,7 @@ public class WebService {
   
   private(set) var webDelegate: WebDelegate?
   internal(set) var authenticationHandler: AuthenticationHandler?
+  internal(set) var fileDownloadHandler: FileDownloadHandler?
   
   public var maxAuthRetry: Int = 0
   

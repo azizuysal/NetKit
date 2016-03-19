@@ -70,6 +70,8 @@ service.GET("/posts")
 
 You can return `.Success` or `.Failure(ErrorType)` from the response handlers to signal error status and control will transfer to `.responseError()` in case of an error.
 
+### Synchronous Requests
+
 You can use `resumeAndWait()` in order to make a synchronous request.
 
 ```swift
@@ -85,6 +87,8 @@ service.PUT("/posts")
   }
   .resumeAndWait()
 ```
+
+### Authentication and SOAP support
 
 If you need to set additional parameters, headers or authentication handlers, you can do so with Swift method chaining.
 
@@ -109,6 +113,56 @@ weatherService.POST()
     print(error)
   }
   .resume()
+```
+
+### Support For All Configurations and Task Types
+
+You can easily create `WebService` instances based on ephemeral or background sessions (the default is based on .defaultSessionConfiguration()).
+
+```Swift
+let service = WebService(urlString: baseURL, configuration: .ephemeralSessionConfiguration())
+```
+
+Just as easily, you can create upload or download tasks (the default is data task).
+
+```Swift
+let task = webService.GET("resource", taskType: WebTask.TaskType.Download)
+```
+
+### Background Downloads
+
+You can easily setup a background url session and create file download tasks.
+
+```Swift
+let webService: WebService = {
+  let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.azizuysal.netkit.test")
+  configuration.requestCachePolicy = .ReloadIgnoringLocalAndRemoteCacheData
+  let service = WebService(urlString: baseURL, configuration: configuration)
+  return service
+}()
+
+You can use the convenient file download handler `responseFile()` to process downloaded files.
+
+downloadService.getFile()
+  .responseFile { (url, response) in
+    let path = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first?
+    if let url = url, response = response, filename = response.suggestedFilename, path = path?.URLByAppendingPathComponent(filename) {
+      do {
+        try NSFileManager.defaultManager().copyItemAtURL(url, toURL: path)
+      } catch let error as NSError {
+        print(error.localizedDescription)
+        return .Failure(error)
+      }
+    } else {
+      return .Failure(WebServiceError.BadData("Bad params"))
+    }
+    notifyUser(DownloadService.FileDownloaded, filename: response?.suggestedFilename)
+    return .Success
+  }.responseError { error in
+    print((error as NSError).localizedDescription)
+    notifyUser(DownloadService.FileDownloaded, error: error)
+  }
+  .resumeAndWait()
 ```
 
 ##License

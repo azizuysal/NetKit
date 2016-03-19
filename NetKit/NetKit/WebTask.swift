@@ -24,7 +24,6 @@ public class WebTask {
   
   public typealias ResponseHandler = (NSData?, NSURLResponse?) -> WebTaskResult
   public typealias JSONHandler = (AnyObject) -> WebTaskResult
-  public typealias DownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias ErrorHandler = (ErrorType) -> Void
   
   private let handlerQueue: NSOperationQueue = {
@@ -45,7 +44,7 @@ public class WebTask {
   private var taskResult: WebTaskResult?
   
   private var semaphore: dispatch_semaphore_t?
-  private var timeout: Int = 0
+  private var timeout: Int = -1
   
   private var authCount: Int = 0
   
@@ -90,13 +89,17 @@ extension WebTask {
       if urlTask?.state == .Running {
         urlTask?.cancel()
       }
+    } else if timeout == 0 {
+      handlerQueue.waitUntilAllOperationsAreFinished()
     }
     return self
   }
   
   public func resumeAndWait(timeout: Int = 0) -> Self {
-    semaphore = dispatch_semaphore_create(0)
     self.timeout = timeout
+    if timeout > 0 {
+      semaphore = dispatch_semaphore_create(0)
+    }
     return resume()
   }
   
@@ -116,10 +119,6 @@ extension WebTask {
       taskResult = WebTaskResult.Failure(error)
     }
     handlerQueue.suspended = false
-    if let semaphore = semaphore {
-      handlerQueue.waitUntilAllOperationsAreFinished()
-      dispatch_semaphore_signal(semaphore)
-    }
     if let urlTask = urlTask {
       webService?.webDelegate?.tasks.removeValueForKey(urlTask.taskIdentifier)
     }
@@ -203,6 +202,14 @@ extension WebTask {
       taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
     }
   }
+  
+  func downloadFile(location: NSURL, response: NSURLResponse?) {
+    guard let fileDownloadHandler = webService?.fileDownloadHandler else {
+      return
+    }
+    taskResult = fileDownloadHandler(location, response)
+    handleResponse(nil, location: location, response: response, error: nil)
+  }
 }
 
 extension WebTask {
@@ -242,7 +249,8 @@ extension WebTask {
     }
   }
   
-  public func responseFile(handler: DownloadHandler) -> Self {
+  public func responseFile(handler: WebService.FileDownloadHandler) -> Self {
+    self.webService?.fileDownloadHandler = handler
     handlerQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
@@ -250,7 +258,6 @@ extension WebTask {
         case .Success: break
         }
       }
-      self.taskResult = handler(self.responseURL, self.urlResponse)
     }
     return self
   }

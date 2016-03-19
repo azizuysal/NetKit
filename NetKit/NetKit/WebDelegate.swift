@@ -51,26 +51,8 @@ extension WebDelegate: NSURLSessionDataDelegate {
 
 extension WebDelegate: NSURLSessionDownloadDelegate {
   func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-    do {
-      let tempDir = try NSFileManager.defaultManager().URLForDirectory(.ItemReplacementDirectory, inDomain: .UserDomainMask, appropriateForURL: NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first, create: true)
-      let newLocation = tempDir.URLByAppendingPathComponent(location.lastPathComponent!)
-      if NSFileManager.defaultManager().fileExistsAtPath(newLocation.path!) {
-        try NSFileManager.defaultManager().removeItemAtURL(newLocation)
-      }
-      try NSFileManager.defaultManager().copyItemAtURL(location, toURL: newLocation)
-      if let handler = handlers[downloadTask.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
-        handler(newLocation, downloadTask.response, nil)
-      }
-      defer {
-        let _ = try? NSFileManager.defaultManager().removeItemAtURL(tempDir)
-        handlers.removeValueForKey(downloadTask.taskIdentifier)
-      }
-    } catch let error as NSError {
-      print(error.localizedDescription)
-      if let handler = handlers[downloadTask.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
-        handler(nil, downloadTask.response, error)
-      }
-    }
+    let webTask = tasks[downloadTask.taskIdentifier]
+    webTask?.downloadFile(location, response: downloadTask.response)
   }
 }
 
@@ -104,7 +86,6 @@ extension BackgroundTaskSource: SessionTaskSource {
   @objc func downloadTaskWithRequest(request: NSURLRequest, completionHandler: (NSURL?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDownloadTask {
     let task = urlSession.downloadTaskWithRequest(request)
     webDelegate?.handlers[task.taskIdentifier] = completionHandler
-    webDelegate?.datas[task.taskIdentifier] = NSMutableData()
     return task
   }
   

@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
   
   deinit {
+    NSNotificationCenter.defaultCenter().removeObserver(self, name: DownloadService.FileDownloaded, object: nil)
     NSNotificationCenter.defaultCenter().removeObserver(self, name: GlobalWeatherService.ReceivedWeather, object: nil)
     NSNotificationCenter.defaultCenter().removeObserver(self, name: GlobalWeatherService.ReceivedCities, object: nil)
     NSNotificationCenter.defaultCenter().removeObserver(self, name: ServiceWithDelegate.CommentsDownloaded, object: nil)
@@ -28,6 +29,7 @@ class ViewController: UIViewController {
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "commentsDownloaded:", name: ServiceWithDelegate.CommentsDownloaded, object: nil)
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "receivedCities:", name: GlobalWeatherService.ReceivedCities, object: nil)
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "receivedWeather:", name: GlobalWeatherService.ReceivedWeather, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "fileDownloaded:", name: DownloadService.FileDownloaded, object: nil)
   }
   
   override func viewWillAppear(animated: Bool) {
@@ -65,6 +67,14 @@ class ViewController: UIViewController {
     ServiceController.getComments()
     
     ServiceController.getCities("Turkey")
+    
+    // Experiment changing downloadQueue from serial to concurrent, or use resume() instead of resumeAndWait(), or use dispatch_async instead of dispatch_sync
+    for _ in 1...10 {
+      ServiceController.downloadFile("5MB.zip")
+      ServiceController.downloadFile("20MB.zip")
+      ServiceController.downloadFile("100MB.zip")
+    }
+    print("********* finished queueing *********")
   }
   
   func postsDownloaded(notification: NSNotification) {
@@ -89,5 +99,13 @@ class ViewController: UIViewController {
   
   func receivedWeather(notification: NSNotification) {
     print("RECEIVED WEATHER")
+  }
+  
+  func fileDownloaded(notification: NSNotification) {
+    if let userInfo = notification.userInfo, let filename = userInfo[DownloadService.FileName] {
+      print("FILE DOWNLOADED: \(filename)")
+    } else {
+      print("FILE DOWNLOADED")
+    }
   }
 }
