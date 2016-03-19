@@ -38,6 +38,7 @@ public class WebService {
   }
   
   public var taskSource: SessionTaskSource
+  public var backgroundCompletionHandler: (() -> Void)?
   
   private let urlString: String
   private let webQueue = NSOperationQueue()
@@ -59,6 +60,7 @@ public class WebService {
     self.urlString = urlString
     webDelegate = WebDelegate()
     taskSource = TaskSource.defaultSource(configuration, delegate: webDelegate, delegateQueue: webQueue)
+    webDelegate?.webService = self
   }
 }
 

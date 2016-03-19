@@ -14,12 +14,18 @@ class WebDelegate: NSObject {
   
   var handlers = [Int:Any]()
   var datas = [Int: NSMutableData?]()
+  
+  weak var webService: WebService?
 }
 
 extension WebDelegate: NSURLSessionTaskDelegate {
   func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
     let webTask = tasks[task.taskIdentifier]
     webTask?.authenticate(challenge.protectionSpace.authenticationMethod, completionHandler: completionHandler)
+  }
+  
+  func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
+    webService?.backgroundCompletionHandler?()
   }
 }
 
