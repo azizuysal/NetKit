@@ -14,7 +14,6 @@ class WebDelegate: NSObject {
   
   var handlers = [Int:Any]()
   var datas = [Int: NSMutableData?]()
-  var locations = [Int: NSURL?]()
 }
 
 extension WebDelegate: NSURLSessionTaskDelegate {
@@ -30,14 +29,9 @@ extension WebDelegate: NSURLSessionDelegate {
       if let handler = handlers[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void, taskData = datas[task.taskIdentifier] {
         handler(taskData, task.response, error)
       }
-    } else if task.isKindOfClass(NSURLSessionDownloadTask) {
-      if let handler = handlers[task.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void, location = locations[task.taskIdentifier] {
-        handler(location, task.response, error)
-      }
+      handlers.removeValueForKey(task.taskIdentifier)
+      datas.removeValueForKey(task.taskIdentifier)
     }
-    handlers.removeValueForKey(task.taskIdentifier)
-    datas.removeValueForKey(task.taskIdentifier)
-    locations.removeValueForKey(task.taskIdentifier)
   }
 }
 
@@ -58,9 +52,18 @@ extension WebDelegate: NSURLSessionDownloadDelegate {
         try NSFileManager.defaultManager().removeItemAtURL(newLocation)
       }
       try NSFileManager.defaultManager().copyItemAtURL(location, toURL: newLocation)
-      locations[downloadTask.taskIdentifier] = newLocation
+      if let handler = handlers[downloadTask.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
+        handler(newLocation, downloadTask.response, nil)
+      }
+      defer {
+        let _ = try? NSFileManager.defaultManager().removeItemAtURL(tempDir)
+        handlers.removeValueForKey(downloadTask.taskIdentifier)
+      }
     } catch let error as NSError {
-      URLSession(session, task: downloadTask, didCompleteWithError: error)
+      print(error.localizedDescription)
+      if let handler = handlers[downloadTask.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
+        handler(nil, downloadTask.response, error)
+      }
     }
   }
 }
