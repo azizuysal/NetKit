@@ -24,6 +24,7 @@ public class WebTask {
   
   public typealias ResponseHandler = (NSData?, NSURLResponse?) -> WebTaskResult
   public typealias JSONHandler = (AnyObject) -> WebTaskResult
+  public typealias FileDownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias ErrorHandler = (ErrorType) -> Void
   
   private let handlerQueue: NSOperationQueue = {
@@ -47,6 +48,7 @@ public class WebTask {
   private var timeout: Int = -1
   
   private var authCount: Int = 0
+  private var fileDownloadHandler: FileDownloadHandler?
   
   deinit {
     handlerQueue.cancelAllOperations()
@@ -204,7 +206,7 @@ extension WebTask {
   }
   
   func downloadFile(location: NSURL, response: NSURLResponse?) {
-    guard let fileDownloadHandler = webService?.fileDownloadHandler else {
+    guard let fileDownloadHandler = fileDownloadHandler else {
       return
     }
     taskResult = fileDownloadHandler(location, response)
@@ -249,8 +251,8 @@ extension WebTask {
     }
   }
   
-  public func responseFile(handler: WebService.FileDownloadHandler) -> Self {
-    self.webService?.fileDownloadHandler = handler
+  public func responseFile(handler: FileDownloadHandler) -> Self {
+    self.fileDownloadHandler = handler
     handlerQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
