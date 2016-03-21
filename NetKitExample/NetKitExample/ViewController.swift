@@ -23,13 +23,14 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "postsDownloaded:", name: JsonService.PostsDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "postsCreated:", name: JsonService.PostsCreated, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "postsUpdated:", name: JsonService.PostsUpdated, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "commentsDownloaded:", name: ServiceWithDelegate.CommentsDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "receivedCities:", name: GlobalWeatherService.ReceivedCities, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "receivedWeather:", name: GlobalWeatherService.ReceivedWeather, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "fileDownloaded:", name: DownloadService.FileDownloaded, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsDownloaded(_:)), name: JsonService.PostsDownloaded, object: nil)
+    
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsCreated(_:)), name: JsonService.PostsCreated, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsUpdated(_:)), name: JsonService.PostsUpdated, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(commentsDownloaded(_:)), name: ServiceWithDelegate.CommentsDownloaded, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(receivedCities(_:)), name: GlobalWeatherService.ReceivedCities, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(receivedWeather(_:)), name: GlobalWeatherService.ReceivedWeather, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(fileDownloaded(_:)), name: DownloadService.FileDownloaded, object: nil)
   }
   
   override func viewWillAppear(animated: Bool) {
