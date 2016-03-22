@@ -86,7 +86,7 @@ extension WebTask {
     urlTask?.resume()
     
     if let semaphore = semaphore {
-      let time = timeout == 0 ? DISPATCH_TIME_FOREVER : dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Int(NSEC_PER_SEC)))
+      let time = dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Int(NSEC_PER_SEC)))
       dispatch_semaphore_wait(semaphore, time)
       if urlTask?.state == .Running {
         urlTask?.cancel()
@@ -121,6 +121,9 @@ extension WebTask {
       taskResult = WebTaskResult.Failure(error)
     }
     handlerQueue.suspended = false
+    if let semaphore = semaphore {
+      dispatch_semaphore_signal(semaphore)
+    }
     if let urlTask = urlTask {
       webService?.webDelegate?.tasks.removeValueForKey(urlTask.taskIdentifier)
     }
@@ -195,7 +198,8 @@ extension WebTask {
     }
     
     if let method = WebService.ChallengeMethod(method: authenticationMethod) where method == .Default || method == .HTTPBasic {
-      if let maxAuth = webService?.maxAuthRetry where maxAuth == 0 || authCount++ < maxAuth {
+      if let maxAuth = webService?.maxAuthRetry where maxAuth == 0 || authCount < maxAuth {
+        authCount += 1
         taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
       } else {
         completionHandler(.PerformDefaultHandling, nil)
