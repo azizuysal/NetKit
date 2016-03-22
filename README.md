@@ -119,13 +119,13 @@ weatherService.POST()
 
 You can easily create `WebService` instances based on ephemeral or background sessions (the default is based on .defaultSessionConfiguration()).
 
-```Swift
+```swift
 let service = WebService(urlString: baseURL, configuration: .ephemeralSessionConfiguration())
 ```
 
 Just as easily, you can create upload or download tasks (the default is data task).
 
-```Swift
+```swift
 let task = webService.GET("resource", taskType: WebTask.TaskType.Download)
 ```
 
@@ -133,16 +133,18 @@ let task = webService.GET("resource", taskType: WebTask.TaskType.Download)
 
 You can easily setup a background url session and create file download tasks.
 
-```Swift
+```swift
 let webService: WebService = {
   let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.azizuysal.netkit.test")
   configuration.requestCachePolicy = .ReloadIgnoringLocalAndRemoteCacheData
   let service = WebService(urlString: baseURL, configuration: configuration)
   return service
 }()
+```
 
 You can use the convenient file download handler `responseFile()` to process downloaded files.
 
+```swift
 downloadService.getFile()
   .responseFile { (url, response) in
     let path = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first?
