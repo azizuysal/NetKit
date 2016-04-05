@@ -24,7 +24,7 @@ $ brew install carthage
 
 To integrate NetKit into your Xcode project using Carthage, specify it in your `Cartfile`:
 
-```ogdl
+```yaml
 github "azizuysal/NetKit"
 ```
 
@@ -32,7 +32,14 @@ Run `carthage update` to build the framework and drag the built `NetKit.framewor
 
 ### CocoaPods
 
-Not supported.
+You can use [CocoaPods](https://cocoapods.org) to integrate NetKit with your project.
+
+Simply add the following line to your `Podfile`:
+```ruby
+pod "NetKit"
+```
+
+And run `pod update` in your project directory.
 
 ### Manually
 
