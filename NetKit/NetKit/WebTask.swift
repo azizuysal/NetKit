@@ -87,9 +87,9 @@ extension WebTask {
     
     if let semaphore = semaphore {
       let time = dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Int(NSEC_PER_SEC)))
-      dispatch_semaphore_wait(semaphore, time)
-      if urlTask?.state == .Running {
-        urlTask?.cancel()
+      let result = dispatch_semaphore_wait(semaphore, time)
+      if result > 0 && urlTask?.state != .Completed {
+        cancel()
       }
     } else if timeout == 0 {
       handlerQueue.waitUntilAllOperationsAreFinished()
