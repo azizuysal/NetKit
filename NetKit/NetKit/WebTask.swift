@@ -95,6 +95,7 @@ extension WebTask {
       if result > 0 && urlTask?.state != .Completed {
         cancel()
       }
+      handlerQueue.waitUntilAllOperationsAreFinished()
     } else if timeout == 0 {
       handlerQueue.waitUntilAllOperationsAreFinished()
     }

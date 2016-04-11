@@ -167,7 +167,7 @@ class ServiceController {
           print((error as NSError).localizedDescription)
           notifyUser(DownloadService.FileDownloaded, error: error)
         }
-        .resumeAndWait()
+        .resumeAndWait(1)
     }
   }
   
