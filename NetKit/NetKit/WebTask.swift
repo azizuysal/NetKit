@@ -50,6 +50,10 @@ public class WebTask {
   private var authCount: Int = 0
   private var fileDownloadHandler: FileDownloadHandler?
   
+  private let originQueue: NSOperationQueue = {
+    return NSOperationQueue.currentQueue() ?? NSOperationQueue()
+  }()
+  
   deinit {
     handlerQueue.cancelAllOperations()
   }
@@ -227,6 +231,7 @@ extension WebTask {
   
   public func response(handler: ResponseHandler) -> Self {
     handlerQueue.addOperationWithBlock {
+      self.originQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(_): return
@@ -234,6 +239,7 @@ extension WebTask {
         }
       }
       self.taskResult = handler(self.responseData, self.urlResponse)
+      }
     }
     return self
   }
@@ -258,11 +264,13 @@ extension WebTask {
   public func responseFile(handler: FileDownloadHandler) -> Self {
     self.fileDownloadHandler = handler
     handlerQueue.addOperationWithBlock {
+      self.originQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(_): return
         case .Success: break
         }
+      }
       }
     }
     return self
@@ -270,11 +278,13 @@ extension WebTask {
   
   public func responseError(handler: ErrorHandler) -> Self {
     handlerQueue.addOperationWithBlock {
+      self.originQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(let error): handler(error)
         case .Success: break
         }
+      }
       }
     }
     return self

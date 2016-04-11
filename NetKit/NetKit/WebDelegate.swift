@@ -32,8 +32,8 @@ extension WebDelegate: NSURLSessionTaskDelegate {
 extension WebDelegate: NSURLSessionDelegate {
   func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
     if task.isKindOfClass(NSURLSessionDataTask) || task.isKindOfClass(NSURLSessionUploadTask) {
-      if let handler = handlers[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void {
-        handler(datas[task.taskIdentifier] as? NSData, task.response, error)
+      if let handler = handlers[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void, let data = datas[task.taskIdentifier] {
+        handler(data, task.response, error)
       }
       datas.removeValueForKey(task.taskIdentifier)
     } else if task.isKindOfClass(NSURLSessionDownloadTask) {
