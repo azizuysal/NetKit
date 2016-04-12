@@ -64,12 +64,8 @@ extension WebDelegate: NSURLSessionDownloadDelegate {
     fileHandlerQueue.addOperationWithBlock {
       // just wait
     }
-    if let path = NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first?.URLByAppendingPathComponent(NSBundle.mainBundle().bundleIdentifier!) {
-      try? NSFileManager.defaultManager().createDirectoryAtURL(path, withIntermediateDirectories: true, attributes: nil)
-      let newLocation = path.URLByAppendingPathComponent(location.lastPathComponent!)
-      try? NSFileManager.defaultManager().copyItemAtURL(location, toURL: newLocation)
-      locations[downloadTask.taskIdentifier] = newLocation
-    }
+    let webTask = tasks[downloadTask.taskIdentifier]
+    webTask?.downloadFile(location, response: downloadTask.response)
     fileHandlerQueue.suspended = false
   }
 }

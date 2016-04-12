@@ -230,6 +230,13 @@ extension WebTask {
       taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
     }
   }
+  
+  func downloadFile(location: NSURL, response: NSURLResponse?) {
+    guard let fileDownloadHandler = fileDownloadHandler else {
+      return
+    }
+    taskResult = fileDownloadHandler(location, response)
+  }
 }
 
 extension WebTask {
@@ -279,11 +286,8 @@ extension WebTask {
   }
   
   public func responseFile(handler: FileDownloadHandler) -> Self {
+    self.fileDownloadHandler = handler
     return response { data, url, response in
-      self.taskResult = handler(url, response)
-      if let url = url {
-        try? NSFileManager.defaultManager().removeItemAtURL(url)
-      }
       return self.taskResult!
     }
   }
