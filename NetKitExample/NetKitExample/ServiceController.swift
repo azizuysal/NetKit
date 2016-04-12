@@ -31,6 +31,7 @@ class ServiceController {
     var result: AnyObject = []
     
     jsonService.getPosts()
+//      .respondOnCurrentQueue(true)
       .responseJSON { json in
         result = json
         notifyUser(JsonService.PostsDownloaded)
@@ -121,7 +122,7 @@ class ServiceController {
       weatherService.getCitiesByCountry()
         .setURLParameters(["op":"GetCitiesByCountry"])
         .setSOAP("<GetCitiesByCountry xmlns=\"http://www.webserviceX.NET\"><CountryName>\(country)</CountryName></GetCitiesByCountry>")
-        .response { data, response in
+        .response { data, url, response in
 //          print(String(data: data!, encoding: NSUTF8StringEncoding))
           notifyUser(GlobalWeatherService.ReceivedCities)
           return .Success
@@ -138,6 +139,7 @@ class ServiceController {
     
     dispatch_async(downloadQueue) {
       downloadService.getFile()
+        .setCachePolicy(.ReloadIgnoringLocalAndRemoteCacheData)
         .setPath(filename)
         .responseFile { (url, response) in
           let path = NSFileManager.defaultManager().URLsForDirectory(.LibraryDirectory, inDomains: .UserDomainMask).first?.URLByAppendingPathComponent("Documents")
@@ -164,10 +166,10 @@ class ServiceController {
           return .Success
         }
         .responseError { error in
-          print((error as NSError).localizedDescription)
+          print(error)
           notifyUser(DownloadService.FileDownloaded, error: error)
         }
-        .resumeAndWait(1)
+        .resumeAndWait()
     }
   }
   

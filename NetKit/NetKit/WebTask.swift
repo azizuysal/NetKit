@@ -16,17 +16,30 @@ public enum WebTaskError: ErrorType {
   case JSONSerializationFailedNilResponseBody
 }
 
+class Observer: NSObject {
+  override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    if keyPath == "operationCount" {
+      if let queue = object as? NSOperationQueue where queue.operationCount == 0 {
+        if let semaphore = UnsafePointer<dispatch_semaphore_t?>(context).memory {
+          dispatch_semaphore_signal(semaphore)
+        }
+      }
+    }
+  }
+}
+
 public class WebTask {
   
   public enum TaskType {
     case Data, Download, Upload
   }
   
-  public typealias ResponseHandler = (NSData?, NSURLResponse?) -> WebTaskResult
+  public typealias ResponseHandler = (NSData?, NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias JSONHandler = (AnyObject) -> WebTaskResult
   public typealias FileDownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
   public typealias ErrorHandler = (ErrorType) -> Void
   
+  private let queueObserver = Observer()
   private let handlerQueue: NSOperationQueue = {
     let queue = NSOperationQueue()
     queue.maxConcurrentOperationCount = 1
@@ -50,6 +63,7 @@ public class WebTask {
   private var authCount: Int = 0
   private var fileDownloadHandler: FileDownloadHandler?
   
+  private var useOriginQueue = false
   private let originQueue: NSOperationQueue = {
     return NSOperationQueue.currentQueue() ?? NSOperationQueue()
   }()
@@ -62,6 +76,7 @@ public class WebTask {
     self.webRequest = webRequest
     self.webService = webService
     self.taskType = taskType
+    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .New, context: &semaphore)
   }
 }
 
@@ -126,9 +141,6 @@ extension WebTask {
       taskResult = WebTaskResult.Failure(error)
     }
     handlerQueue.suspended = false
-    if let semaphore = semaphore {
-      dispatch_semaphore_signal(semaphore)
-    }
     if let urlTask = urlTask {
       webService?.webDelegate?.tasks.removeValueForKey(urlTask.taskIdentifier)
     }
@@ -192,6 +204,11 @@ extension WebTask {
     webRequest.cachePolicy = cachePolicy
     return self
   }
+  
+  public func respondOnCurrentQueue(useOriginQueue: Bool) -> Self {
+    self.useOriginQueue = useOriginQueue
+    return self
+  }
 }
 
 extension WebTask {
@@ -213,14 +230,6 @@ extension WebTask {
       taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
     }
   }
-  
-  func downloadFile(location: NSURL, response: NSURLResponse?) {
-    guard let fileDownloadHandler = fileDownloadHandler else {
-      return
-    }
-    taskResult = fileDownloadHandler(location, response)
-    handleResponse(nil, location: location, response: response, error: nil)
-  }
 }
 
 extension WebTask {
@@ -231,22 +240,29 @@ extension WebTask {
   }
   
   public func response(handler: ResponseHandler) -> Self {
-    handlerQueue.addOperationWithBlock {
-      self.originQueue.addOperationWithBlock {
+    let responseBlock = {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(_): return
         case .Success: break
         }
       }
-      self.taskResult = handler(self.responseData, self.urlResponse)
+      self.taskResult = handler(self.responseData, self.responseURL, self.urlResponse)
+    }
+    handlerQueue.addOperationWithBlock {
+      if self.useOriginQueue {
+        self.originQueue.addOperationWithBlock {
+          responseBlock()
+        }
+      } else {
+        responseBlock()
       }
     }
     return self
   }
   
   public func responseJSON(handler: JSONHandler) -> Self {
-    return response { data, response in
+    return response { data, url, response in
       if let data = data {
         do {
           let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
@@ -263,29 +279,31 @@ extension WebTask {
   }
   
   public func responseFile(handler: FileDownloadHandler) -> Self {
-    self.fileDownloadHandler = handler
-    handlerQueue.addOperationWithBlock {
-      self.originQueue.addOperationWithBlock {
-      if let taskResult = self.taskResult {
-        switch taskResult {
-        case .Failure(_): return
-        case .Success: break
-        }
+    return response { data, url, response in
+      self.taskResult = handler(url, response)
+      if let url = url {
+        try? NSFileManager.defaultManager().removeItemAtURL(url)
       }
-      }
+      return self.taskResult!
     }
-    return self
   }
   
   public func responseError(handler: ErrorHandler) -> Self {
-    handlerQueue.addOperationWithBlock {
-      self.originQueue.addOperationWithBlock {
+    let responseErrorBlock = {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(let error): handler(error)
         case .Success: break
         }
       }
+    }
+    handlerQueue.addOperationWithBlock {
+      if self.useOriginQueue {
+        self.originQueue.addOperationWithBlock {
+          responseErrorBlock()
+        }
+      } else {
+        responseErrorBlock()
       }
     }
     return self

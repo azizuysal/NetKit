@@ -14,6 +14,9 @@ class WebDelegate: NSObject {
   
   var handlers = [Int:Any]()
   var datas = [Int: NSMutableData?]()
+  var locations = [Int: NSURL?]()
+  
+  let fileHandlerQueue = NSOperationQueue()
   
   weak var webService: WebService?
 }
@@ -38,7 +41,9 @@ extension WebDelegate: NSURLSessionDelegate {
       datas.removeValueForKey(task.taskIdentifier)
     } else if task.isKindOfClass(NSURLSessionDownloadTask) {
       if let handler = handlers[task.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
-        handler(nil, task.response, error)
+        fileHandlerQueue.waitUntilAllOperationsAreFinished()
+        let url = locations[task.taskIdentifier]
+        handler(url ?? nil, task.response, error)
       }
     }
     handlers.removeValueForKey(task.taskIdentifier)
@@ -55,8 +60,17 @@ extension WebDelegate: NSURLSessionDataDelegate {
 
 extension WebDelegate: NSURLSessionDownloadDelegate {
   func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-    let webTask = tasks[downloadTask.taskIdentifier]
-    webTask?.downloadFile(location, response: downloadTask.response)
+    fileHandlerQueue.suspended = true
+    fileHandlerQueue.addOperationWithBlock {
+      // just wait
+    }
+    if let path = NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first?.URLByAppendingPathComponent(NSBundle.mainBundle().bundleIdentifier!) {
+      try? NSFileManager.defaultManager().createDirectoryAtURL(path, withIntermediateDirectories: true, attributes: nil)
+      let newLocation = path.URLByAppendingPathComponent(location.lastPathComponent!)
+      try? NSFileManager.defaultManager().copyItemAtURL(location, toURL: newLocation)
+      locations[downloadTask.taskIdentifier] = newLocation
+    }
+    fileHandlerQueue.suspended = false
   }
 }
 

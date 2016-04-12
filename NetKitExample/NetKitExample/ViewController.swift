@@ -45,7 +45,7 @@ class ViewController: UIViewController {
     print(json)
     
     print("starting async methods")
-    
+
     // This will execute and finish before weather service even though it is delayed 2 seconds
     // If you change resumeAndWait() to resume(), it will start execution before weather call, but weather call will finish earlier.
     ServiceController.getPosts()
