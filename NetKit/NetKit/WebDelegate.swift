@@ -28,7 +28,20 @@ extension WebDelegate: NSURLSessionTaskDelegate {
   }
   
   func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-    webService?.backgroundCompletionHandler?()
+    if let completionHandler = webService?.backgroundCompletionHandler {
+      webService?.backgroundCompletionHandler = nil
+      dispatch_async(dispatch_get_main_queue()) {
+        completionHandler()
+        
+        let localNotification = UILocalNotification()
+        localNotification.alertBody = "All documents have been downloaded."
+//        localNotification.alertTitle = "MY APP"
+        UIApplication.sharedApplication().presentLocalNotificationNow(localNotification)
+//        UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+//        localNotification.alertBody = @"All files have been downloaded!";
+//        [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+      }
+    }
   }
 }
 
