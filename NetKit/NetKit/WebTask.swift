@@ -63,26 +63,28 @@ public class WebTask {
   private var authCount: Int = 0
   private var fileDownloadHandler: FileDownloadHandler?
   
-  private var useOriginQueue = false
-  private let originQueue: NSOperationQueue = {
-    return NSOperationQueue.currentQueue() ?? NSOperationQueue()
-  }()
+//  private var useOriginQueue = false
+//  private let originQueue: NSOperationQueue = {
+//    return NSOperationQueue.currentQueue() ?? NSOperationQueue()
+//  }()
   
   deinit {
-    handlerQueue.cancelAllOperations()
+//    handlerQueue.cancelAllOperations()
+    handlerQueue.removeObserver(queueObserver, forKeyPath: "operationCount")
   }
   
   public init(webRequest: WebRequest, webService: WebService, taskType: TaskType = .Data) {
     self.webRequest = webRequest
     self.webService = webService
     self.taskType = taskType
-    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .New, context: &semaphore)
   }
 }
 
 extension WebTask {
   
   public func resume() -> Self {
+    
+    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .New, context: &semaphore)
     
     if urlTask == nil {
       switch taskType {
@@ -205,10 +207,10 @@ extension WebTask {
     return self
   }
   
-  public func respondOnCurrentQueue(useOriginQueue: Bool) -> Self {
-    self.useOriginQueue = useOriginQueue
-    return self
-  }
+//  public func respondOnCurrentQueue(useOriginQueue: Bool) -> Self {
+//    self.useOriginQueue = useOriginQueue
+//    return self
+//  }
 }
 
 extension WebTask {
@@ -247,7 +249,7 @@ extension WebTask {
   }
   
   public func response(handler: ResponseHandler) -> Self {
-    let responseBlock = {
+    handlerQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(_): return
@@ -256,15 +258,25 @@ extension WebTask {
       }
       self.taskResult = handler(self.responseData, self.responseURL, self.urlResponse)
     }
-    handlerQueue.addOperationWithBlock {
-      if self.useOriginQueue {
-        self.originQueue.addOperationWithBlock {
-          responseBlock()
-        }
-      } else {
-        responseBlock()
-      }
-    }
+    
+//    let responseBlock = {
+//      if let taskResult = self.taskResult {
+//        switch taskResult {
+//        case .Failure(_): return
+//        case .Success: break
+//        }
+//      }
+//      self.taskResult = handler(self.responseData, self.responseURL, self.urlResponse)
+//    }
+//    handlerQueue.addOperationWithBlock {
+//      if self.useOriginQueue {
+//        self.originQueue.addOperationWithBlock {
+//          responseBlock()
+//        }
+//      } else {
+//        responseBlock()
+//      }
+//    }
     return self
   }
   
@@ -293,7 +305,7 @@ extension WebTask {
   }
   
   public func responseError(handler: ErrorHandler) -> Self {
-    let responseErrorBlock = {
+    handlerQueue.addOperationWithBlock {
       if let taskResult = self.taskResult {
         switch taskResult {
         case .Failure(let error): handler(error)
@@ -301,15 +313,24 @@ extension WebTask {
         }
       }
     }
-    handlerQueue.addOperationWithBlock {
-      if self.useOriginQueue {
-        self.originQueue.addOperationWithBlock {
-          responseErrorBlock()
-        }
-      } else {
-        responseErrorBlock()
-      }
-    }
+    
+//    let responseErrorBlock = {
+//      if let taskResult = self.taskResult {
+//        switch taskResult {
+//        case .Failure(let error): handler(error)
+//        case .Success: break
+//        }
+//      }
+//    }
+//    handlerQueue.addOperationWithBlock {
+//      if self.useOriginQueue {
+//        self.originQueue.addOperationWithBlock {
+//          responseErrorBlock()
+//        }
+//      } else {
+//        responseErrorBlock()
+//      }
+//    }
     return self
   }
 }
