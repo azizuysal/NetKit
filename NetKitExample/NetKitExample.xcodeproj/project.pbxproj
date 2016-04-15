@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F52D7AC1CC19FA80045AAFC /* NetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF8E4871C74EF3000A3C042 /* NetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8F695A641C9DD0D500D0AA65 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F695A631C9DD0D500D0AA65 /* DownloadService.swift */; };
 		8FA225431C77D09400DE2F9E /* JsonWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225421C77D09400DE2F9E /* JsonWebService.swift */; };
 		8FA225451C77E23800DE2F9E /* ServiceWithDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */; };
@@ -16,9 +17,22 @@
 		8FF8E47B1C74EF0000A3C042 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8FF8E4791C74EF0000A3C042 /* Main.storyboard */; };
 		8FF8E47D1C74EF0000A3C042 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8FF8E47C1C74EF0000A3C042 /* Assets.xcassets */; };
 		8FF8E4801C74EF0000A3C042 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8FF8E47E1C74EF0000A3C042 /* LaunchScreen.storyboard */; };
-		8FF8E4881C74EF3000A3C042 /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF8E4871C74EF3000A3C042 /* NetKit.framework */; };
 		8FF8E48D1C74F31000A3C042 /* ServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8E48C1C74F31000A3C042 /* ServiceController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8F52D7AD1CC19FA80045AAFC /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8F52D7AC1CC19FA80045AAFC /* NetKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8F695A631C9DD0D500D0AA65 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
@@ -41,7 +55,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FF8E4881C74EF3000A3C042 /* NetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +114,7 @@
 				8FF8E46E1C74EF0000A3C042 /* Sources */,
 				8FF8E46F1C74EF0000A3C042 /* Frameworks */,
 				8FF8E4701C74EF0000A3C042 /* Resources */,
+				8F52D7AD1CC19FA80045AAFC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
