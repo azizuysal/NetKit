@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F52D7AC1CC19FA80045AAFC /* NetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF8E4871C74EF3000A3C042 /* NetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8F52D7C11CC1A52E0045AAFC /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7C01CC1A52E0045AAFC /* NetKit.framework */; };
+		8F52D7C21CC1A52E0045AAFC /* NetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7C01CC1A52E0045AAFC /* NetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8F695A641C9DD0D500D0AA65 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F695A631C9DD0D500D0AA65 /* DownloadService.swift */; };
 		8FA225431C77D09400DE2F9E /* JsonWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225421C77D09400DE2F9E /* JsonWebService.swift */; };
 		8FA225451C77E23800DE2F9E /* ServiceWithDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */; };
@@ -21,13 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8F52D7AD1CC19FA80045AAFC /* Embed Frameworks */ = {
+		8F52D7C31CC1A52E0045AAFC /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8F52D7AC1CC19FA80045AAFC /* NetKit.framework in Embed Frameworks */,
+				8F52D7C21CC1A52E0045AAFC /* NetKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8F52D7C01CC1A52E0045AAFC /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = NetKit.framework; path = "/Users/aziz/Library/Developer/Xcode/DerivedData/NetKit-eyisebsfprraxoeobgxwhnuhjwep/Build/Products/Debug-iphoneos/NetKit.framework"; sourceTree = "<absolute>"; };
 		8F695A631C9DD0D500D0AA65 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		8FA225421C77D09400DE2F9E /* JsonWebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonWebService.swift; sourceTree = "<group>"; };
 		8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceWithDelegate.swift; sourceTree = "<group>"; };
@@ -46,7 +48,6 @@
 		8FF8E47C1C74EF0000A3C042 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8FF8E47F1C74EF0000A3C042 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8FF8E4811C74EF0000A3C042 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8FF8E4871C74EF3000A3C042 /* NetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetKit.framework; path = "/Users/aziz/Library/Developer/Xcode/DerivedData/NetKit-eyisebsfprraxoeobgxwhnuhjwep/Build/Products/Debug-iphoneos/NetKit.framework"; sourceTree = "<absolute>"; };
 		8FF8E48C1C74F31000A3C042 /* ServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -55,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F52D7C11CC1A52E0045AAFC /* NetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,7 +101,7 @@
 		8FF8E4891C74EF4300A3C042 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				8FF8E4871C74EF3000A3C042 /* NetKit.framework */,
+				8F52D7C01CC1A52E0045AAFC /* NetKit.framework */,
 			);
 			name = ThirdParty;
 			sourceTree = "<group>";
@@ -114,7 +116,7 @@
 				8FF8E46E1C74EF0000A3C042 /* Sources */,
 				8FF8E46F1C74EF0000A3C042 /* Frameworks */,
 				8FF8E4701C74EF0000A3C042 /* Resources */,
-				8F52D7AD1CC19FA80045AAFC /* Embed Frameworks */,
+				8F52D7C31CC1A52E0045AAFC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
