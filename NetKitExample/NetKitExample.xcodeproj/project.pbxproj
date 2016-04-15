@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F52D7C11CC1A52E0045AAFC /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7C01CC1A52E0045AAFC /* NetKit.framework */; };
-		8F52D7C21CC1A52E0045AAFC /* NetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7C01CC1A52E0045AAFC /* NetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8F52D7CF1CC1AAB10045AAFC /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7CD1CC1AA7A0045AAFC /* NetKit.framework */; };
+		8F52D7D01CC1AAB10045AAFC /* NetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8F52D7CD1CC1AA7A0045AAFC /* NetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8F695A641C9DD0D500D0AA65 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F695A631C9DD0D500D0AA65 /* DownloadService.swift */; };
 		8FA225431C77D09400DE2F9E /* JsonWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225421C77D09400DE2F9E /* JsonWebService.swift */; };
 		8FA225451C77E23800DE2F9E /* ServiceWithDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */; };
@@ -22,13 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8F52D7C31CC1A52E0045AAFC /* Embed Frameworks */ = {
+		8F52D7D11CC1AAB10045AAFC /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8F52D7C21CC1A52E0045AAFC /* NetKit.framework in Embed Frameworks */,
+				8F52D7D01CC1AAB10045AAFC /* NetKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -36,7 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8F52D7C01CC1A52E0045AAFC /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = NetKit.framework; path = "/Users/aziz/Library/Developer/Xcode/DerivedData/NetKit-eyisebsfprraxoeobgxwhnuhjwep/Build/Products/Debug-iphoneos/NetKit.framework"; sourceTree = "<absolute>"; };
+		8F52D7CD1CC1AA7A0045AAFC /* NetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F695A631C9DD0D500D0AA65 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		8FA225421C77D09400DE2F9E /* JsonWebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonWebService.swift; sourceTree = "<group>"; };
 		8FA225441C77E23800DE2F9E /* ServiceWithDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceWithDelegate.swift; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F52D7C11CC1A52E0045AAFC /* NetKit.framework in Frameworks */,
+				8F52D7CF1CC1AAB10045AAFC /* NetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +101,7 @@
 		8FF8E4891C74EF4300A3C042 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				8F52D7C01CC1A52E0045AAFC /* NetKit.framework */,
+				8F52D7CD1CC1AA7A0045AAFC /* NetKit.framework */,
 			);
 			name = ThirdParty;
 			sourceTree = "<group>";
@@ -116,7 +116,7 @@
 				8FF8E46E1C74EF0000A3C042 /* Sources */,
 				8FF8E46F1C74EF0000A3C042 /* Frameworks */,
 				8FF8E4701C74EF0000A3C042 /* Resources */,
-				8F52D7C31CC1A52E0045AAFC /* Embed Frameworks */,
+				8F52D7D11CC1AAB10045AAFC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
