@@ -164,6 +164,7 @@
 				TargetAttributes = {
 					8F708FC01C6E9D8C00246BCC = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0800;
 					};
 					8F708FCA1C6E9D8C00246BCC = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -344,6 +345,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -361,6 +363,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azizuysal.NetKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};
