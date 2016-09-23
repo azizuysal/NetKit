@@ -19,7 +19,7 @@ public enum WebTaskError: Error {
 class Observer: NSObject {
   override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if keyPath == "operationCount" {
-      if let queue = object as? OperationQueue , queue.operationCount == 0 {
+      if let queue = object as? OperationQueue, queue.operationCount == 0 {
         if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
           semaphore.signal()
         }
