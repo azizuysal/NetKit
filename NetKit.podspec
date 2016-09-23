@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = "NetKit"
-s.version          = "0.9.3.2"
+s.version          = "0.9.3.3"
 s.summary          = "A Concise HTTP Framework in Swift."
 s.description      = "A Concise and Easy To Use HTTP Framework in Swift."
 s.homepage         = "https://github.com/azizuysal/NetKit"
