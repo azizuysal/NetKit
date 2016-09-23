@@ -1,5 +1,6 @@
-[![Language](https://img.shields.io/badge/Swift-2.1-orange.svg)](http://swift.org)
+[![Language](https://img.shields.io/badge/Swift-3.0-orange.svg)](http://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-brightgreen.svg)](http://cocoapods.org)
 
 # NetKit
 
@@ -7,7 +8,9 @@ A Concise HTTP Framework in Swift.
 
 ## Requirements
 
-NetKit requires Swift 2.1 and Xcode 7.2.
+NetKit requires Swift 3.0 and Xcode 8.0.
+
+There is a `swift2` branch that supports Swift 2.3 and Xcode 7.3 if you're not ready to upgrade to Swift 3.
 
 ## Installation
 
