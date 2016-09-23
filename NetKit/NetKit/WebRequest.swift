@@ -33,23 +33,23 @@ public struct WebRequest {
   }
   
   public enum ParameterEncoding {
-    case Percent, JSON
+    case percent, json
     
-    public func encodeURL(url: NSURL, parameters: [String:AnyObject]) -> NSURL? {
-      if let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) {
+    public func encodeURL(_ url: URL, parameters: [String:Any]) -> URL? {
+      if var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
         components.appendPercentEncodedQuery(parameters.percentEncodedQueryString)
-        return components.URL
+        return components.url
       }
       return nil
     }
     
-    public func encodeBody(parameters: [String:AnyObject]) -> NSData? {
+    public func encodeBody(_ parameters: [String:Any]) -> Data? {
       switch self {
-      case .Percent:
-        return parameters.percentEncodedQueryString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-      case .JSON:
+      case .percent:
+        return parameters.percentEncodedQueryString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+      case .json:
         do {
-          return try NSJSONSerialization.dataWithJSONObject(parameters, options: [])
+          return try JSONSerialization.data(withJSONObject: parameters, options: [])
         } catch {
           return nil
         }
@@ -58,16 +58,16 @@ public struct WebRequest {
   }
   
   let method: Method
-  private(set) var url: String
-  var body: NSData?
+  fileprivate(set) var url: String
+  var body: Data?
   
-  var cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+  var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
   
-  var urlParameters = [String:AnyObject]()
-  var bodyParameters = [String:AnyObject]()
-  var parameterEncoding = ParameterEncoding.Percent {
+  var urlParameters = [String:Any]()
+  var bodyParameters = [String:Any]()
+  var parameterEncoding = ParameterEncoding.percent {
     didSet {
-      if parameterEncoding == .JSON {
+      if parameterEncoding == .json {
         contentType = Headers.ContentType.json
       }
     }
@@ -85,9 +85,9 @@ public struct WebRequest {
     get { return headers[Headers.contentType] }
   }
   
-  var urlRequest: NSURLRequest {
-    let request = NSMutableURLRequest(URL: NSURL(string: url)!)
-    request.HTTPMethod = method.rawValue
+  var urlRequest: URLRequest {
+    let request = NSMutableURLRequest(url: URL(string: url)!)
+    request.httpMethod = method.rawValue
     request.cachePolicy = cachePolicy
     
     for (name, value) in headers {
@@ -95,25 +95,25 @@ public struct WebRequest {
     }
     
     if urlParameters.count > 0 {
-      if let url = request.URL, encodedURL = parameterEncoding.encodeURL(url, parameters: urlParameters) {
-        request.URL = encodedURL
+      if let url = request.url, let encodedURL = parameterEncoding.encodeURL(url, parameters: urlParameters) {
+        request.url = encodedURL
       }
     }
     
     if bodyParameters.count > 0 {
       if let data = parameterEncoding.encodeBody(bodyParameters) {
-        request.HTTPBody = data
-        if request.valueForHTTPHeaderField(Headers.contentType) == nil {
+        request.httpBody = data
+        if request.value(forHTTPHeaderField: Headers.contentType) == nil {
           request.setValue(Headers.ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
         }
       }
     }
     
     if let body = body {
-      request.HTTPBody = body
+      request.httpBody = body
     }
     
-    return request.copy() as! NSURLRequest
+    return request.copy() as! URLRequest
   }
   
   public init(method: Method, url: String) {
@@ -122,8 +122,8 @@ public struct WebRequest {
   }
 }
 
-extension NSURLComponents {
-  func appendPercentEncodedQuery(query: String) {
+extension URLComponents {
+  mutating func appendPercentEncodedQuery(_ query: String) {
     percentEncodedQuery = percentEncodedQuery == nil ? query : "\(percentEncodedQuery)&\(query)"
   }
 }
@@ -136,10 +136,10 @@ extension Dictionary {
         components.append(percentEncodedPair)
       }
     }
-    return components.joinWithSeparator("&")
+    return components.joined(separator: "&")
   }
   
-  func percentEncode(element: Element) -> String? {
+  func percentEncode(_ element: Element) -> String? {
     let (name, value) = element
     if let encodedName = "\(name)".percentEncodeURLQueryCharacters, let encodedValue = "\(value)".percentEncodeURLQueryCharacters {
       return "\(encodedName)=\(encodedValue)"
@@ -150,6 +150,6 @@ extension Dictionary {
 
 extension String {
   var percentEncodeURLQueryCharacters: String? {
-    return self.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())
+    return self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
   }
 }

@@ -16,26 +16,26 @@ struct ServiceResult {
 
 class ServiceController {
   
-  private static let jsonService = JsonService()
-  private static let serviceWithDelegate = ServiceWithDelegate()
-  private static let weatherService = GlobalWeatherService()
-  private static let downloadService = DownloadService()
+  fileprivate static let jsonService = JsonService()
+  fileprivate static let serviceWithDelegate = ServiceWithDelegate()
+  fileprivate static let weatherService = GlobalWeatherService()
+  fileprivate static let downloadService = DownloadService()
   
-  private static let networkQueueSerial = dispatch_queue_create("networkQueueSerial", DISPATCH_QUEUE_SERIAL)
-  private static let networkQueueParallel = dispatch_queue_create("networkQueueParallel", DISPATCH_QUEUE_CONCURRENT)
-  private static let downloadQueue = dispatch_queue_create("downloadQueue", DISPATCH_QUEUE_SERIAL)
+  fileprivate static let networkQueueSerial = DispatchQueue(label: "networkQueueSerial", attributes: [])
+  fileprivate static let networkQueueParallel = DispatchQueue(label: "networkQueueParallel", attributes: DispatchQueue.Attributes.concurrent)
+  fileprivate static let downloadQueue = DispatchQueue(label: "downloadQueue", attributes: [])
   
   // MARK: ExampleService
   
-  class func getPostsSync() -> AnyObject {
-    var result: AnyObject = []
+  class func getPostsSync() -> Any {
+    var result: Any = []
     
     jsonService.getPosts()
 //      .respondOnCurrentQueue(true)
       .responseJSON { json in
         result = json
         notifyUser(JsonService.PostsDownloaded)
-        return .Success
+        return .success
       }
       .responseError { error in
         print(error)
@@ -47,12 +47,12 @@ class ServiceController {
   }
   
   class func getPosts() {
-    dispatch_sync(networkQueueSerial) {
+    _ = networkQueueSerial.sync {
       jsonService.getPosts()
         .responseJSON { json in
           print(json)
           notifyUser(JsonService.PostsDownloaded)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -62,14 +62,14 @@ class ServiceController {
     }
   }
   
-  class func addPost(post: Post) {
-    dispatch_async(networkQueueParallel) {
+  class func addPost(_ post: Post) {
+    networkQueueParallel.async {
       jsonService.addPost()
         .setJSON(post.toJson())
         .responseJSON { json in
           print(json)
           notifyUser(JsonService.PostsCreated)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -79,15 +79,15 @@ class ServiceController {
     }
   }
   
-  class func updatePost(post: Post) {
-    dispatch_async(networkQueueParallel) {
+  class func updatePost(_ post: Post) {
+    networkQueueParallel.async {
       jsonService.updatePost()
         .setPath(String(post.id))
         .setJSON(post.toJson())
         .responseJSON { json in
           print(json)
           notifyUser(JsonService.PostsUpdated)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -100,12 +100,12 @@ class ServiceController {
   // MARK: ServiceWithDelegate
   
   class func getComments() {
-    dispatch_sync(networkQueueSerial) {
+    _ = networkQueueSerial.sync {
       serviceWithDelegate.getComments()
         .responseJSON { json in
           print(json)
           notifyUser(ServiceWithDelegate.CommentsDownloaded)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -117,15 +117,15 @@ class ServiceController {
   
   // MARK: GlobalWeatherService
   
-  class func getCities(country: String)  {
-    dispatch_sync(networkQueueSerial) {
+  class func getCities(_ country: String)  {
+    _ = networkQueueSerial.sync {
       weatherService.getCitiesByCountry()
         .setURLParameters(["op":"GetCitiesByCountry"])
         .setSOAP("<GetCitiesByCountry xmlns=\"http://www.webserviceX.NET\"><CountryName>\(country)</CountryName></GetCitiesByCountry>")
         .response { data, url, response in
 //          print(String(data: data!, encoding: NSUTF8StringEncoding))
           notifyUser(GlobalWeatherService.ReceivedCities)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -135,35 +135,35 @@ class ServiceController {
     }
   }
   
-  class func downloadFile(filename: String) {
+  class func downloadFile(_ filename: String) {
     
-    dispatch_async(downloadQueue) {
+    downloadQueue.async {
       downloadService.getFile()
-        .setCachePolicy(.ReloadIgnoringLocalAndRemoteCacheData)
+        .setCachePolicy(.reloadIgnoringLocalAndRemoteCacheData)
         .setPath(filename)
         .responseFile { (url, response) in
-          let path = NSFileManager.defaultManager().URLsForDirectory(.LibraryDirectory, inDomains: .UserDomainMask).first?.URLByAppendingPathComponent("Documents")
+          let path = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first?.appendingPathComponent("Documents")
           do {
-            try NSFileManager.defaultManager().createDirectoryAtURL(path!, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: path!, withIntermediateDirectories: true, attributes: nil)
           } catch let error as NSError {
             print(error.localizedDescription)
-            return .Failure(error)
+            return .failure(error)
           }
-          if let url = url, response = response, filename = response.suggestedFilename, path = path?.URLByAppendingPathComponent(filename) {
+          if let url = url, let response = response, let filename = response.suggestedFilename, let path = path?.appendingPathComponent(filename) {
             do {
-              if NSFileManager.defaultManager().fileExistsAtPath(path.path!) {
-                try NSFileManager.defaultManager().removeItemAtURL(path)
+              if FileManager.default.fileExists(atPath: path.path) {
+                try FileManager.default.removeItem(at: path)
               }
-              try NSFileManager.defaultManager().copyItemAtURL(url, toURL: path)
+              try FileManager.default.copyItem(at: url, to: path)
             } catch let error as NSError {
               print(error.localizedDescription)
-              return .Failure(error)
+              return .failure(error)
             }
           } else {
-            return .Failure(WebServiceError.BadData("File parameter is nil"))
+            return .failure(WebServiceError.badData("File parameter is nil"))
           }
           notifyUser(DownloadService.FileDownloaded, filename: response?.suggestedFilename)
-          return .Success
+          return .success
         }
         .responseError { error in
           print(error)
@@ -175,31 +175,31 @@ class ServiceController {
   
   // MARK: Private methods
   
-  private class func notifyUser(event: String, error: ErrorType? = nil, filename: String? = nil) {
+  fileprivate class func notifyUser(_ event: String, error: Error? = nil, filename: String? = nil) {
     var userInfo = [String:AnyObject]()
-    userInfo = [ServiceResult.Success:true]
+    userInfo = [ServiceResult.Success:true as AnyObject]
     if let error = error {
-      userInfo[ServiceResult.Success] = false
+      userInfo[ServiceResult.Success] = false as AnyObject?
       userInfo[ServiceResult.Error] = error as NSError
     }
     if let filename = filename {
-      userInfo[DownloadService.FileName] = filename
+      userInfo[DownloadService.FileName] = filename as AnyObject?
     }
-    NSNotificationCenter.defaultCenter().postNotificationName(event, object: nil, userInfo: userInfo)
+    NotificationCenter.default.post(name: Notification.Name(rawValue: event), object: nil, userInfo: userInfo)
   }
 }
 
 // MARK: Errors
 
-enum WebServiceError: ErrorType, CustomStringConvertible {
-  case BadResponse(String)
-  case BadData(String)
+enum WebServiceError: Error, CustomStringConvertible {
+  case badResponse(String)
+  case badData(String)
   
   var description: String {
     switch self {
-    case let .BadResponse(info):
+    case let .badResponse(info):
       return info
-    case let .BadData(info):
+    case let .badData(info):
       return info
     }
   }

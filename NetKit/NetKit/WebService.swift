@@ -8,18 +8,33 @@
 
 import Foundation
 
+public typealias DataTaskHandler = (Data?, URLResponse?, Error?) -> Void
+public typealias DownloadTaskHandler = (URL?, URLResponse?, Error?) -> Void
+public typealias UploadTaskHandler = DataTaskHandler
+
 @objc public protocol SessionTaskSource {
-  optional func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
-  optional func downloadTaskWithRequest(request: NSURLRequest, completionHandler: (NSURL?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDownloadTask
-  optional func uploadTaskWithRequest(request: NSURLRequest, fromData: NSData?, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionUploadTask
-  optional func invalidateAndCancel()
+  @objc optional func nkDataTask(with: URLRequest, completionHandler: @escaping DataTaskHandler) -> URLSessionDataTask
+  @objc optional func nkDownloadTask(with: URLRequest, completionHandler: @escaping DownloadTaskHandler) -> URLSessionDownloadTask
+  @objc optional func nkUploadTask(with: URLRequest, from: Data?, completionHandler: @escaping UploadTaskHandler) -> URLSessionUploadTask
+  @objc optional func invalidateAndCancel()
 }
-extension NSURLSession: SessionTaskSource {}
+
+extension URLSession: SessionTaskSource {
+  public func nkDataTask(with request: URLRequest, completionHandler: @escaping DataTaskHandler) -> URLSessionDataTask {
+    return dataTask(with: request, completionHandler: completionHandler)
+  }
+  public func nkDownloadTask(with request: URLRequest, completionHandler: @escaping DownloadTaskHandler) -> URLSessionDownloadTask {
+    return downloadTask(with: request, completionHandler: completionHandler)
+  }
+  public func nkUploadTask(with request: URLRequest, from data: Data?, completionHandler: @escaping UploadTaskHandler) -> URLSessionUploadTask {
+    return uploadTask(with: request, from: data, completionHandler: completionHandler)
+  }
+}
 
 public class WebService {
   
   public typealias AuthenticationHandler = (ChallengeMethod, ChallengeCompletionHandler) -> WebTaskResult
-  public typealias ChallengeCompletionHandler = (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void
+  public typealias ChallengeCompletionHandler = (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
   public enum ChallengeMethod: String {
     case Default, HTTPBasic, HTTPDigest, HTMLForm, Negotiate, NTLM, ClientCertificate, ServerTrust
     init?(method: String) {
@@ -40,10 +55,10 @@ public class WebService {
   public var taskSource: SessionTaskSource
   public var backgroundCompletionHandler: (() -> Void)?
   
-  private let urlString: String
-  private let webQueue = NSOperationQueue()
+  fileprivate let urlString: String
+  fileprivate let webQueue = OperationQueue()
   
-  private(set) var webDelegate: WebDelegate?
+  fileprivate(set) var webDelegate: WebDelegate?
   internal(set) var authenticationHandler: AuthenticationHandler?
   
   public var maxAuthRetry: Int = 0
@@ -53,10 +68,13 @@ public class WebService {
   }
   
   public convenience init(urlString: String) {
-    self.init(urlString: urlString, configuration: .defaultSessionConfiguration())
+    self.init(urlString: urlString, configuration: .default)
   }
   
-  public init(urlString: String, configuration: NSURLSessionConfiguration) {
+  public init(urlString: String, configuration: URLSessionConfiguration) {
+    
+//    method_exchangeImplementations(class_getInstanceMethod(URLSession.classForCoder(), "dataTaskWithRequest:completionHandler:"), class_getInstanceMethod(URLSession.classForCoder(), "nkDataTaskWithRequest:completionHandler:"))
+    
     self.urlString = urlString
     webDelegate = WebDelegate()
     taskSource = TaskSource.defaultSource(configuration, delegate: webDelegate, delegateQueue: webQueue)
@@ -66,26 +84,26 @@ public class WebService {
 
 extension WebService {
   
-  public func HEAD(path: String) -> WebTask {
+  public func HEAD(_ path: String) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .HEAD, url: urlString.stringByAppendingPathComponent(path)), webService: self)
   }
-  public func GET(path: String, taskType: WebTask.TaskType = .Data) -> WebTask {
+  public func GET(_ path: String, taskType: WebTask.TaskType = .data) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .GET, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
   }
-  public func POST(path: String, taskType: WebTask.TaskType = .Data) -> WebTask {
+  public func POST(_ path: String, taskType: WebTask.TaskType = .data) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .POST, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
   }
-  public func PUT(path: String) -> WebTask {
+  public func PUT(_ path: String) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .PUT, url: urlString.stringByAppendingPathComponent(path)), webService: self)
   }
-  public func DELETE(path: String) -> WebTask {
+  public func DELETE(_ path: String) -> WebTask {
     return WebTask(webRequest: WebRequest(method: .DELETE, url: urlString.stringByAppendingPathComponent(path)), webService: self)
   }
 }
 
 extension String {
-  func stringByAppendingPathComponent(str: String) -> String {
+  func stringByAppendingPathComponent(_ str: String) -> String {
     let ns = self as NSString
-    return ns.stringByAppendingPathComponent(str)
+    return ns.appendingPathComponent(str)
   }
 }

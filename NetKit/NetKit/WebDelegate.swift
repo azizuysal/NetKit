@@ -14,102 +14,102 @@ class WebDelegate: NSObject {
   
   var handlers = [Int:Any]()
   var datas = [Int: NSMutableData?]()
-  var locations = [Int: NSURL?]()
+  var locations = [Int: URL?]()
   
-  let fileHandlerQueue = NSOperationQueue()
+  let fileHandlerQueue = OperationQueue()
   
   weak var webService: WebService?
 }
 
-extension WebDelegate: NSURLSessionTaskDelegate {
-  func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+extension WebDelegate: URLSessionTaskDelegate {
+  func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
     let webTask = tasks[task.taskIdentifier]
     webTask?.authenticate(challenge.protectionSpace.authenticationMethod, completionHandler: completionHandler)
   }
   
-  func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
+  @objc(URLSessionDidFinishEventsForBackgroundURLSession:) func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
     if let completionHandler = webService?.backgroundCompletionHandler {
       webService?.backgroundCompletionHandler = nil
-      dispatch_async(dispatch_get_main_queue()) {
+      DispatchQueue.main.async {
         completionHandler()
       }
     }
   }
 }
 
-extension WebDelegate: NSURLSessionDelegate {
-  func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-    if task.isKindOfClass(NSURLSessionDataTask) || task.isKindOfClass(NSURLSessionUploadTask) {
-      if let handler = handlers[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void, let data = datas[task.taskIdentifier] {
-        handler(data, task.response, error)
+extension WebDelegate: URLSessionDelegate {
+  @objc(URLSession:task:didCompleteWithError:) func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    if task.isKind(of: URLSessionDataTask.self) || task.isKind(of: URLSessionUploadTask.self) {
+      if let handler = handlers[task.taskIdentifier] as? DataTaskHandler, let data = datas[task.taskIdentifier] {
+        handler(data as Data?, task.response, error as NSError?)
       }
-      datas.removeValueForKey(task.taskIdentifier)
-    } else if task.isKindOfClass(NSURLSessionDownloadTask) {
-      if let handler = handlers[task.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void {
+      datas.removeValue(forKey: task.taskIdentifier)
+    } else if task.isKind(of: URLSessionDownloadTask.self) {
+      if let handler = handlers[task.taskIdentifier] as? DownloadTaskHandler {
         fileHandlerQueue.waitUntilAllOperationsAreFinished()
         let url = locations[task.taskIdentifier]
-        handler(url ?? nil, task.response, error)
+        handler(url ?? nil, task.response, error as NSError?)
       }
     }
-    handlers.removeValueForKey(task.taskIdentifier)
+    handlers.removeValue(forKey: task.taskIdentifier)
   }
 }
 
-extension WebDelegate: NSURLSessionDataDelegate {
-  func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+extension WebDelegate: URLSessionDataDelegate {
+  func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
     if let taskData = datas[dataTask.taskIdentifier] {
-      taskData?.appendData(data)
+      taskData?.append(data)
     }
   }
 }
 
-extension WebDelegate: NSURLSessionDownloadDelegate {
-  func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-    fileHandlerQueue.suspended = true
-    fileHandlerQueue.addOperationWithBlock {
+extension WebDelegate: URLSessionDownloadDelegate {
+  func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+    fileHandlerQueue.isSuspended = true
+    fileHandlerQueue.addOperation {
       // just wait
     }
     let webTask = tasks[downloadTask.taskIdentifier]
     webTask?.downloadFile(location, response: downloadTask.response)
-    fileHandlerQueue.suspended = false
+    fileHandlerQueue.isSuspended = false
   }
 }
 
 class TaskSource {
-  class func defaultSource(configuration: NSURLSessionConfiguration, delegate: NSURLSessionDelegate?, delegateQueue: NSOperationQueue?) -> SessionTaskSource {
+  class func defaultSource(_ configuration: URLSessionConfiguration, delegate: URLSessionDelegate?, delegateQueue: OperationQueue?) -> SessionTaskSource {
     if configuration.identifier != nil {
       return BackgroundTaskSource(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
     }
-    return NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
+    return URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
   }
 }
 
 class BackgroundTaskSource {
-  var urlSession: NSURLSession
+  var urlSession: URLSession
   let webDelegate: WebDelegate?
   
-  init(configuration: NSURLSessionConfiguration, delegate: NSURLSessionDelegate?, delegateQueue: NSOperationQueue?) {
+  init(configuration: URLSessionConfiguration, delegate: URLSessionDelegate?, delegateQueue: OperationQueue?) {
     webDelegate = delegate as? WebDelegate
-    urlSession = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
+    urlSession = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
   }
 }
 
 extension BackgroundTaskSource: SessionTaskSource {
-  @objc func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-    let task = urlSession.dataTaskWithRequest(request)
+  @objc func nkDataTask(with request: URLRequest, completionHandler: @escaping DataTaskHandler) -> URLSessionDataTask {
+    let task = urlSession.dataTask(with: request)
     webDelegate?.handlers[task.taskIdentifier] = completionHandler
     webDelegate?.datas[task.taskIdentifier] = NSMutableData()
     return task
   }
   
-  @objc func downloadTaskWithRequest(request: NSURLRequest, completionHandler: (NSURL?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDownloadTask {
-    let task = urlSession.downloadTaskWithRequest(request)
+  @objc func nkDownloadTask(with request: URLRequest, completionHandler: @escaping DownloadTaskHandler) -> URLSessionDownloadTask {
+    let task = urlSession.downloadTask(with: request)
     webDelegate?.handlers[task.taskIdentifier] = completionHandler
     return task
   }
   
-  @objc func uploadTaskWithRequest(request: NSURLRequest, fromData: NSData?, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionUploadTask {
-    let task = urlSession.uploadTaskWithRequest(request, fromData: fromData!)
+  @objc func nkUploadTask(with request: URLRequest, from data: Data?, completionHandler: @escaping UploadTaskHandler) -> URLSessionUploadTask {
+    let task = urlSession.uploadTask(with: request, from: data!)
     webDelegate?.handlers[task.taskIdentifier] = completionHandler
     webDelegate?.datas[task.taskIdentifier] = NSMutableData()
     return task

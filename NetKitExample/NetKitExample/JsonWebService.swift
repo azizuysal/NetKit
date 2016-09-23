@@ -40,7 +40,7 @@ extension JsonServiceAPI {
 
 class JsonService: JsonServiceAPI {
   
-  private static let baseURL = "http://localhost:3000/"
+  fileprivate static let baseURL = "http://localhost:3000/"
   let webService = WebService(urlString: baseURL)
   
   static let PostsDownloaded = "PostsDownloaded"
@@ -57,9 +57,9 @@ class Post {
   
   func toJson() -> [String:AnyObject] {
     var json = [String:AnyObject]()
-    json["id"] = id
-    json["title"] = title
-    json["author"] = author
+    json["id"] = id as AnyObject?
+    json["title"] = title as AnyObject?
+    json["author"] = author as AnyObject?
     return json
   }
 }

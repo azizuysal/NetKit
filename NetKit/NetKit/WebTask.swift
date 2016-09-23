@@ -9,19 +9,19 @@
 import Foundation
 
 public enum WebTaskResult {
-  case Success, Failure(ErrorType)
+  case success, failure(Error)
 }
 
-public enum WebTaskError: ErrorType {
-  case JSONSerializationFailedNilResponseBody
+public enum WebTaskError: Error {
+  case jsonSerializationFailedNilResponseBody
 }
 
 class Observer: NSObject {
-  override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if keyPath == "operationCount" {
-      if let queue = object as? NSOperationQueue where queue.operationCount == 0 {
-        if let semaphore = UnsafePointer<dispatch_semaphore_t?>(context).memory {
-          dispatch_semaphore_signal(semaphore)
+      if let queue = object as? OperationQueue , queue.operationCount == 0 {
+        if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
+          semaphore.signal()
         }
       }
     }
@@ -31,37 +31,37 @@ class Observer: NSObject {
 public class WebTask {
   
   public enum TaskType {
-    case Data, Download, Upload
+    case data, download, upload
   }
   
-  public typealias ResponseHandler = (NSData?, NSURL?, NSURLResponse?) -> WebTaskResult
-  public typealias JSONHandler = (AnyObject) -> WebTaskResult
-  public typealias FileDownloadHandler = (NSURL?, NSURLResponse?) -> WebTaskResult
-  public typealias ErrorHandler = (ErrorType) -> Void
+  public typealias ResponseHandler = (Data?, URL?, URLResponse?) -> WebTaskResult
+  public typealias JSONHandler = (Any) -> WebTaskResult
+  public typealias FileDownloadHandler = (URL?, URLResponse?) -> WebTaskResult
+  public typealias ErrorHandler = (Error) -> Void
   
-  private let queueObserver = Observer()
-  private let handlerQueue: NSOperationQueue = {
-    let queue = NSOperationQueue()
+  fileprivate let queueObserver = Observer()
+  fileprivate let handlerQueue: OperationQueue = {
+    let queue = OperationQueue()
     queue.maxConcurrentOperationCount = 1
-    queue.suspended = true
+    queue.isSuspended = true
     return queue
   }()
   
-  private var webRequest: WebRequest
-  private weak var webService: WebService?
-  private let taskType: TaskType
-  private var urlTask: NSURLSessionTask?
+  fileprivate var webRequest: WebRequest
+  fileprivate weak var webService: WebService?
+  fileprivate let taskType: TaskType
+  fileprivate var urlTask: URLSessionTask?
   
-  private var urlResponse: NSURLResponse?
-  private var responseData: NSData?
-  private var responseURL: NSURL?
-  private var taskResult: WebTaskResult?
+  fileprivate var urlResponse: URLResponse?
+  fileprivate var responseData: Data?
+  fileprivate var responseURL: URL?
+  fileprivate var taskResult: WebTaskResult?
   
-  private var semaphore: dispatch_semaphore_t?
-  private var timeout: Int = -1
+  fileprivate var semaphore: DispatchSemaphore?
+  fileprivate var timeout: Int = -1
   
-  private var authCount: Int = 0
-  private var fileDownloadHandler: FileDownloadHandler?
+  fileprivate var authCount: Int = 0
+  fileprivate var fileDownloadHandler: FileDownloadHandler?
   
 //  private var useOriginQueue = false
 //  private let originQueue: NSOperationQueue = {
@@ -73,7 +73,7 @@ public class WebTask {
     handlerQueue.removeObserver(queueObserver, forKeyPath: "operationCount")
   }
   
-  public init(webRequest: WebRequest, webService: WebService, taskType: TaskType = .Data) {
+  public init(webRequest: WebRequest, webService: WebService, taskType: TaskType = .data) {
     self.webRequest = webRequest
     self.webService = webService
     self.taskType = taskType
@@ -82,34 +82,36 @@ public class WebTask {
 
 extension WebTask {
   
-  public func resume() -> Self {
+  @discardableResult public func resume() -> Self {
     
-    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .New, context: &semaphore)
+    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .new, context: &semaphore)
     
     if urlTask == nil {
       switch taskType {
-      case .Data:
-        urlTask = webService?.taskSource.dataTaskWithRequest?(webRequest.urlRequest) { data, response, error in
+      case .data:
+        urlTask = webService?.taskSource.nkDataTask?(with: webRequest.urlRequest) { data, response, error in
           self.handleResponse(data, response: response, error: error)
         }
-      case .Download:
-        urlTask = webService?.taskSource.downloadTaskWithRequest?(webRequest.urlRequest) { location, response, error in
+      case .download:
+        urlTask = webService?.taskSource.nkDownloadTask?(with: webRequest.urlRequest) { location, response, error in
           self.handleResponse(location: location, response: response, error: error)
         }
-      case .Upload:
-        urlTask = webService?.taskSource.uploadTaskWithRequest?(webRequest.urlRequest, fromData: webRequest.body) { data, response, error in
+      case .upload:
+        urlTask = webService?.taskSource.nkUploadTask?(with: webRequest.urlRequest, from: webRequest.body) { data, response, error in
           self.handleResponse(data, response: response, error: error)
         }
       }
     }
     
-    webService?.webDelegate?.tasks[urlTask!.taskIdentifier] = self
-    urlTask?.resume()
+    if let task = urlTask {
+      webService?.webDelegate?.tasks[task.taskIdentifier] = self
+      task.resume()
+    }
     
     if let semaphore = semaphore {
-      let time = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(timeout) * NSEC_PER_SEC))
-      let result = dispatch_semaphore_wait(semaphore, time)
-      if result > 0 && urlTask?.state != .Completed {
+      let time = DispatchTime.now() + Double(Int64(UInt64(timeout) * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)
+      let result = semaphore.wait(timeout: time)
+      if result == DispatchTimeoutResult.timedOut && urlTask?.state != .completed {
         cancel()
       }
       handlerQueue.waitUntilAllOperationsAreFinished()
@@ -119,10 +121,10 @@ extension WebTask {
     return self
   }
   
-  public func resumeAndWait(timeout: Int = 0) -> Self {
+  @discardableResult public func resumeAndWait(_ timeout: Int = 0) -> Self {
     self.timeout = timeout
     if timeout > 0 {
-      semaphore = dispatch_semaphore_create(0)
+      semaphore = DispatchSemaphore(value: 0)
     }
     return resume()
   }
@@ -135,74 +137,74 @@ extension WebTask {
     urlTask?.cancel()
   }
   
-  private func handleResponse(data: NSData? = nil, location: NSURL? = nil, response: NSURLResponse?, error: NSError?) {
+  fileprivate func handleResponse(_ data: Data? = nil, location: URL? = nil, response: URLResponse?, error: Error?) {
     urlResponse = response
     responseData = data
     responseURL = location
     if let error = error {
-      taskResult = WebTaskResult.Failure(error)
+      taskResult = WebTaskResult.failure(error)
     }
-    handlerQueue.suspended = false
+    handlerQueue.isSuspended = false
     if let urlTask = urlTask {
-      webService?.webDelegate?.tasks.removeValueForKey(urlTask.taskIdentifier)
+      _ = webService?.webDelegate?.tasks.removeValue(forKey: urlTask.taskIdentifier)
     }
   }
 }
 
 extension WebTask {
   
-  public func setURLParameters(parameters: [String:AnyObject]) -> Self {
+  public func setURLParameters(_ parameters: [String:Any]) -> Self {
     webRequest.urlParameters = parameters
     return self
   }
   
-  public func setBodyParameters(parameters: [String:AnyObject], encoding: WebRequest.ParameterEncoding? = nil) -> Self {
+  public func setBodyParameters(_ parameters: [String:Any], encoding: WebRequest.ParameterEncoding? = nil) -> Self {
     webRequest.bodyParameters = parameters
-    webRequest.parameterEncoding = encoding ?? .Percent
-    if encoding == .JSON {
+    webRequest.parameterEncoding = encoding ?? .percent
+    if encoding == .json {
       webRequest.contentType = WebRequest.Headers.ContentType.json
     }
     return self
   }
   
-  public func setBody(data: NSData) -> Self {
+  public func setBody(_ data: Data) -> Self {
     webRequest.body = data
     return self
   }
   
-  public func setPath(path: String) -> Self {
+  public func setPath(_ path: String) -> Self {
     webRequest.restPath = path
     return self
   }
   
-  public func setJSON(json: AnyObject) -> Self {
+  public func setJSON(_ json: Any) -> Self {
     webRequest.contentType = WebRequest.Headers.ContentType.json
-    webRequest.body = try? NSJSONSerialization.dataWithJSONObject(json, options: [])
+    webRequest.body = try? JSONSerialization.data(withJSONObject: json, options: [])
     return self
   }
   
-  public func setSOAP(soap: String) -> Self {
+  public func setSOAP(_ soap: String) -> Self {
     webRequest.contentType = WebRequest.Headers.ContentType.xml
-    webRequest.body = soap.placedInSoapEnvelope().dataUsingEncoding(NSUTF8StringEncoding)
+    webRequest.body = soap.placedInSoapEnvelope().data(using: String.Encoding.utf8)
     return self
   }
   
-  public func setHeaders(headers: [String:String]) -> Self {
+  public func setHeaders(_ headers: [String:String]) -> Self {
     webRequest.headers = headers
     return self
   }
   
-  public func setHeaderValue(value: String, forName name: String) -> Self {
+  public func setHeaderValue(_ value: String, forName name: String) -> Self {
     webRequest.headers[name] = value
     return self
   }
   
-  public func setParameterEncoding(encoding: WebRequest.ParameterEncoding) -> Self {
+  public func setParameterEncoding(_ encoding: WebRequest.ParameterEncoding) -> Self {
     webRequest.parameterEncoding = encoding
     return self
   }
   
-  public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
+  public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
     webRequest.cachePolicy = cachePolicy
     return self
   }
@@ -215,25 +217,25 @@ extension WebTask {
 
 extension WebTask {
   
-  func authenticate(authenticationMethod: String, completionHandler: WebService.ChallengeCompletionHandler) {
+  func authenticate(_ authenticationMethod: String, completionHandler: WebService.ChallengeCompletionHandler) {
     guard let authenticationHandler = webService?.authenticationHandler else {
-      completionHandler(.PerformDefaultHandling, nil)
+      completionHandler(.performDefaultHandling, nil)
       return
     }
     
-    if let method = WebService.ChallengeMethod(method: authenticationMethod) where method == .Default || method == .HTTPBasic {
-      if let maxAuth = webService?.maxAuthRetry where maxAuth == 0 || authCount < maxAuth {
+    if let method = WebService.ChallengeMethod(method: authenticationMethod) , method == .Default || method == .HTTPBasic {
+      if let maxAuth = webService?.maxAuthRetry , maxAuth == 0 || authCount < maxAuth {
         authCount += 1
         taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
       } else {
-        completionHandler(.PerformDefaultHandling, nil)
+        completionHandler(.performDefaultHandling, nil)
       }
     } else {
       taskResult = authenticationHandler(WebService.ChallengeMethod(method: authenticationMethod)!, completionHandler)
     }
   }
   
-  func downloadFile(location: NSURL, response: NSURLResponse?) {
+  func downloadFile(_ location: URL, response: URLResponse?) {
     guard let fileDownloadHandler = fileDownloadHandler else {
       return
     }
@@ -243,17 +245,17 @@ extension WebTask {
 
 extension WebTask {
   
-  public func authenticate(handler: WebService.AuthenticationHandler) -> Self {
+  public func authenticate(_ handler: @escaping WebService.AuthenticationHandler) -> Self {
     webService?.authenticationHandler = handler
     return self
   }
   
-  public func response(handler: ResponseHandler) -> Self {
-    handlerQueue.addOperationWithBlock {
+  public func response(_ handler: @escaping ResponseHandler) -> Self {
+    handlerQueue.addOperation {
       if let taskResult = self.taskResult {
         switch taskResult {
-        case .Failure(_): return
-        case .Success: break
+        case .failure(_): return
+        case .success: break
         }
       }
       self.taskResult = handler(self.responseData, self.responseURL, self.urlResponse)
@@ -280,36 +282,36 @@ extension WebTask {
     return self
   }
   
-  public func responseJSON(handler: JSONHandler) -> Self {
+  public func responseJSON(_ handler: @escaping JSONHandler) -> Self {
     return response { data, url, response in
       if let data = data {
         do {
-          let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+          let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
           return handler(json)
         } catch let jsonError as NSError {
-          return .Failure(jsonError)
+          return .failure(jsonError)
         } catch {
           fatalError()
         }
       } else {
-        return .Failure(WebTaskError.JSONSerializationFailedNilResponseBody)
+        return .failure(WebTaskError.jsonSerializationFailedNilResponseBody)
       }
     }
   }
   
-  public func responseFile(handler: FileDownloadHandler) -> Self {
+  public func responseFile(_ handler: @escaping FileDownloadHandler) -> Self {
     self.fileDownloadHandler = handler
     return response { data, url, response in
       return self.taskResult!
     }
   }
   
-  public func responseError(handler: ErrorHandler) -> Self {
-    handlerQueue.addOperationWithBlock {
+  public func responseError(_ handler: @escaping ErrorHandler) -> Self {
+    handlerQueue.addOperation {
       if let taskResult = self.taskResult {
         switch taskResult {
-        case .Failure(let error): handler(error)
-        case .Success: break
+        case .failure(let error): handler(error)
+        case .success: break
         }
       }
     }

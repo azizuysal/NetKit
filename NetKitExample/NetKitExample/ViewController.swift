@@ -11,29 +11,29 @@ import UIKit
 class ViewController: UIViewController {
   
   deinit {
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: DownloadService.FileDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: GlobalWeatherService.ReceivedWeather, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: GlobalWeatherService.ReceivedCities, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: ServiceWithDelegate.CommentsDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: JsonService.PostsDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: JsonService.PostsCreated, object: nil)
-    NSNotificationCenter.defaultCenter().removeObserver(self, name: JsonService.PostsUpdated, object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: DownloadService.FileDownloaded), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedWeather), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedCities), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ServiceWithDelegate.CommentsDownloaded), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsDownloaded), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsCreated), object: nil)
+    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsUpdated), object: nil)
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsDownloaded(_:)), name: JsonService.PostsDownloaded, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(postsDownloaded(_:)), name: NSNotification.Name(rawValue: JsonService.PostsDownloaded), object: nil)
     
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsCreated(_:)), name: JsonService.PostsCreated, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postsUpdated(_:)), name: JsonService.PostsUpdated, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(commentsDownloaded(_:)), name: ServiceWithDelegate.CommentsDownloaded, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(receivedCities(_:)), name: GlobalWeatherService.ReceivedCities, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(receivedWeather(_:)), name: GlobalWeatherService.ReceivedWeather, object: nil)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(fileDownloaded(_:)), name: DownloadService.FileDownloaded, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(postsCreated(_:)), name: NSNotification.Name(rawValue: JsonService.PostsCreated), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(postsUpdated(_:)), name: NSNotification.Name(rawValue: JsonService.PostsUpdated), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(commentsDownloaded(_:)), name: NSNotification.Name(rawValue: ServiceWithDelegate.CommentsDownloaded), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(receivedCities(_:)), name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedCities), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(receivedWeather(_:)), name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedWeather), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(fileDownloaded(_:)), name: NSNotification.Name(rawValue: DownloadService.FileDownloaded), object: nil)
   }
   
-  override func viewWillAppear(animated: Bool) {
+  override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     
     // Important: use json-server with following options, otherwise below steps will not execute as expected
@@ -78,32 +78,32 @@ class ViewController: UIViewController {
     print("********* finished queueing *********")
   }
   
-  func postsDownloaded(notification: NSNotification) {
+  func postsDownloaded(_ notification: Notification) {
     print("POSTS DOWNLOADED")
   }
   
-  func postsCreated(notification: NSNotification) {
+  func postsCreated(_ notification: Notification) {
     print("POST CREATED")
   }
   
-  func postsUpdated(notification: NSNotification) {
+  func postsUpdated(_ notification: Notification) {
     print("POST UPDATED")
   }
   
-  func commentsDownloaded(notification: NSNotification) {
+  func commentsDownloaded(_ notification: Notification) {
     print("COMMENTS DOWNLOADED")
   }
   
-  func receivedCities(notification: NSNotification) {
+  func receivedCities(_ notification: Notification) {
     print("RECEIVED CITIES")
   }
   
-  func receivedWeather(notification: NSNotification) {
+  func receivedWeather(_ notification: Notification) {
     print("RECEIVED WEATHER")
   }
   
-  func fileDownloaded(notification: NSNotification) {
-    if let userInfo = notification.userInfo, let filename = userInfo[DownloadService.FileName] {
+  func fileDownloaded(_ notification: Notification) {
+    if let userInfo = (notification as NSNotification).userInfo, let filename = userInfo[DownloadService.FileName] {
       print("FILE DOWNLOADED: \(filename)")
     } else {
       print("FILE DOWNLOADED")

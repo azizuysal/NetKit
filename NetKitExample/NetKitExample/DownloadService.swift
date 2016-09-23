@@ -18,16 +18,16 @@ protocol DownloadServiceAPI {
 extension DownloadServiceAPI {
   
   func getFile() -> WebTask {
-    return webService.GET("", taskType: WebTask.TaskType.Download)
+    return webService.GET("", taskType: WebTask.TaskType.download)
   }
 }
 
 class DownloadService: DownloadServiceAPI {
   
-  private static let baseURL = "http://web4host.net"
+  fileprivate static let baseURL = "http://web4host.net"
   let webService: WebService = {
-    let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.azizuysal.netkit.test")
-    configuration.requestCachePolicy = .ReloadIgnoringLocalAndRemoteCacheData
+    let configuration = URLSessionConfiguration.background(withIdentifier: "com.azizuysal.netkit.test")
+    configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
     let service = WebService(urlString: baseURL, configuration: configuration)
     return service
   }()

@@ -26,62 +26,62 @@ extension ServiceWithDelegateAPI {
 extension ServiceWithDelegate: ServiceWithDelegateAPI {}
 
 extension ServiceWithDelegate: SessionTaskSource {
-  @objc func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-    let task = urlSession.dataTaskWithRequest(request)
+  @objc func nkDataTask(with request: URLRequest, completionHandler: @escaping DataTaskHandler) -> URLSessionDataTask {
+    let task = urlSession.dataTask(with: request)
     tasks[task.taskIdentifier] = completionHandler
     datas[task.taskIdentifier] = NSMutableData()
     return task
   }
 }
 
-extension ServiceWithDelegate: NSURLSessionDelegate {
-  func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-    if task.isKindOfClass(NSURLSessionDataTask) || task.isKindOfClass(NSURLSessionUploadTask) {
-      if let handler = tasks[task.taskIdentifier] as? (NSData?, NSURLResponse?, NSError?) -> Void, taskData = datas[task.taskIdentifier] {
-        handler(taskData, task.response, error)
+extension ServiceWithDelegate: URLSessionDelegate {
+  @objc(URLSession:task:didCompleteWithError:) func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    if task.isKind(of: URLSessionDataTask.self) || task.isKind(of: URLSessionUploadTask.self) {
+      if let handler = tasks[task.taskIdentifier] as? (Data?, URLResponse?, NSError?) -> Void, let taskData = datas[task.taskIdentifier] {
+        handler(taskData as Data?, task.response, error as NSError?)
       }
-    } else if task.isKindOfClass(NSURLSessionDownloadTask) {
-      if let handler = tasks[task.taskIdentifier] as? (NSURL?, NSURLResponse?, NSError?) -> Void, location = locations[task.taskIdentifier] {
-        handler(location, task.response, error)
+    } else if task.isKind(of: URLSessionDownloadTask.self) {
+      if let handler = tasks[task.taskIdentifier] as? (URL?, URLResponse?, NSError?) -> Void, let location = locations[task.taskIdentifier] {
+        handler(location, task.response, error as NSError?)
       }
     }
-    tasks.removeValueForKey(task.taskIdentifier)
-    datas.removeValueForKey(task.taskIdentifier)
-    locations.removeValueForKey(task.taskIdentifier)
+    tasks.removeValue(forKey: task.taskIdentifier)
+    datas.removeValue(forKey: task.taskIdentifier)
+    locations.removeValue(forKey: task.taskIdentifier)
   }
 }
 
-extension ServiceWithDelegate: NSURLSessionDataDelegate {
-  func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+extension ServiceWithDelegate: URLSessionDataDelegate {
+  func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
     if let taskData = datas[dataTask.taskIdentifier] {
-      taskData?.appendData(data)
+      taskData?.append(data)
     }
   }
 }
 
-extension ServiceWithDelegate: NSURLSessionDownloadDelegate {
-  func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+extension ServiceWithDelegate: URLSessionDownloadDelegate {
+  func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
     locations[downloadTask.taskIdentifier] = location
   }
 }
 
 class ServiceWithDelegate: NSObject {
   
-  private static let baseURL = "http://localhost:3000/"
+  fileprivate static let baseURL = "http://localhost:3000/"
   let webService = WebService(urlString: baseURL)
   
-  var urlSession: NSURLSession!
+  var urlSession: Foundation.URLSession!
   
   var tasks = [Int:Any]()
   var datas = [Int: NSMutableData?]()
-  var locations = [Int: NSURL?]()
+  var locations = [Int: URL?]()
   
   override init() {
     super.init()
-    let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-    configuration.HTTPCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-    configuration.HTTPAdditionalHeaders  = ["Accept":"application/json"]
-    urlSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    let configuration = URLSessionConfiguration.ephemeral
+    configuration.httpCookieStorage = HTTPCookieStorage.shared
+    configuration.httpAdditionalHeaders  = ["Accept":"application/json"]
+    urlSession = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     webService.taskSource = self
   }
   
@@ -96,9 +96,9 @@ class Comment {
   
   func toJson() -> [String:AnyObject] {
     var json = [String:AnyObject]()
-    json["id"] = id
-    json["postId"] = postId
-    json["body"] = body
+    json["id"] = id as AnyObject?
+    json["postId"] = postId as AnyObject?
+    json["body"] = body as AnyObject?
     return json
   }
 }
