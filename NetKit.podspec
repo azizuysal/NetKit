@@ -4,8 +4,9 @@ s.version          = "0.9.4.0"
 s.summary          = "A Concise HTTP Framework in Swift."
 s.description      = "A Concise and Easy To Use HTTP Framework in Swift."
 s.homepage         = "https://github.com/azizuysal/NetKit"
-s.license          = 'MIT'
-s.author           = { "azizuysal" => "azizuysal@gmail.com" }
+s.license          = { :type => "MIT", :file => "LICENSE.md" }
+s.author           = { "Aziz Uysal" => "azizuysal@gmail.com" }
+s.social_media_url = 'https://twitter.com/azizuysal'
 s.source           = { :git => "https://github.com/azizuysal/NetKit.git", :tag => s.version.to_s }
 s.platform         = :ios, '8.0'
 s.requires_arc     = true

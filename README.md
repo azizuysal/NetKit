@@ -1,6 +1,6 @@
 [![Language](https://img.shields.io/badge/Swift-3.0-orange.svg)](http://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-brightgreen.svg)](http://cocoapods.org)
+[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-brightgreen.svg)](https://cocoapods.org)
 
 # NetKit
 
