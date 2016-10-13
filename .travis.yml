@@ -1,7 +1,11 @@
 language: objective-c
 osx_image: xcode8
-xcode_workspace: NetKit.xcworkspace
-xcode_scheme:
-  - NetKit
-  - NetKitExample
-xcode_sdk: iphonesimulator10.0
+#xcode_workspace: NetKit.xcworkspace
+#xcode_scheme:
+#  - NetKit
+#  - NetKitExample
+#xcode_sdk: iphonesimulator10.0
+#xcode_configuration: Release
+script:
+  - xcodebuild -workspace NetKit.xcworkspace -scheme NetKit -configuration Release -sdk iphonesimulator10.0
+  - xcodebuild -workspace NetKit.xcworkspace -scheme NetKitExample -configuration Release -sdk iphonesimulator10.0

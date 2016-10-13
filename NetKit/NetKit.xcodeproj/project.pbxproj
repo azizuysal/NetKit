@@ -8,34 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		8F12138E1C73F5C90008A6D4 /* WebDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F12138D1C73F5C90008A6D4 /* WebDelegate.swift */; };
-		8F12138F1C73F5C90008A6D4 /* WebDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F12138D1C73F5C90008A6D4 /* WebDelegate.swift */; };
 		8F708FC51C6E9D8C00246BCC /* NetKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F708FC41C6E9D8C00246BCC /* NetKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F708FCC1C6E9D8C00246BCC /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F708FC11C6E9D8C00246BCC /* NetKit.framework */; };
-		8F708FD11C6E9D8C00246BCC /* NetKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FD01C6E9D8C00246BCC /* NetKitTests.swift */; };
 		8F708FDC1C6EA19500246BCC /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDB1C6EA19500246BCC /* WebService.swift */; };
-		8F708FDD1C6EA19500246BCC /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDB1C6EA19500246BCC /* WebService.swift */; };
 		8F708FDF1C6EA26C00246BCC /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDE1C6EA26C00246BCC /* WebRequest.swift */; };
-		8F708FE01C6EA26C00246BCC /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDE1C6EA26C00246BCC /* WebRequest.swift */; };
 		8F708FE21C6EA90500246BCC /* WebTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FE11C6EA90500246BCC /* WebTask.swift */; };
-		8F708FE31C6EA90500246BCC /* WebTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FE11C6EA90500246BCC /* WebTask.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		8F708FCD1C6E9D8C00246BCC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F708FB81C6E9D8C00246BCC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8F708FC01C6E9D8C00246BCC;
-			remoteInfo = NetKit;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8F12138D1C73F5C90008A6D4 /* WebDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebDelegate.swift; sourceTree = "<group>"; };
 		8F708FC11C6E9D8C00246BCC /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F708FC41C6E9D8C00246BCC /* NetKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetKit.h; sourceTree = "<group>"; };
 		8F708FC61C6E9D8C00246BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8F708FCB1C6E9D8C00246BCC /* NetKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F708FD01C6E9D8C00246BCC /* NetKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetKitTests.swift; sourceTree = "<group>"; };
 		8F708FD21C6E9D8C00246BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F708FDB1C6EA19500246BCC /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
@@ -48,14 +31,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F708FC81C6E9D8C00246BCC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8F708FCC1C6E9D8C00246BCC /* NetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +50,6 @@
 			isa = PBXGroup;
 			children = (
 				8F708FC11C6E9D8C00246BCC /* NetKit.framework */,
-				8F708FCB1C6E9D8C00246BCC /* NetKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,24 +108,6 @@
 			productReference = 8F708FC11C6E9D8C00246BCC /* NetKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		8F708FCA1C6E9D8C00246BCC /* NetKitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8F708FD81C6E9D8C00246BCC /* Build configuration list for PBXNativeTarget "NetKitTests" */;
-			buildPhases = (
-				8F708FC71C6E9D8C00246BCC /* Sources */,
-				8F708FC81C6E9D8C00246BCC /* Frameworks */,
-				8F708FC91C6E9D8C00246BCC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8F708FCE1C6E9D8C00246BCC /* PBXTargetDependency */,
-			);
-			name = NetKitTests;
-			productName = NetKitTests;
-			productReference = 8F708FCB1C6E9D8C00246BCC /* NetKitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -165,9 +121,6 @@
 					8F708FC01C6E9D8C00246BCC = {
 						CreatedOnToolsVersion = 7.2.1;
 						LastSwiftMigration = 0800;
-					};
-					8F708FCA1C6E9D8C00246BCC = {
-						CreatedOnToolsVersion = 7.2.1;
 					};
 				};
 			};
@@ -184,20 +137,12 @@
 			projectRoot = "";
 			targets = (
 				8F708FC01C6E9D8C00246BCC /* NetKit */,
-				8F708FCA1C6E9D8C00246BCC /* NetKitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8F708FBF1C6E9D8C00246BCC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F708FC91C6E9D8C00246BCC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -218,27 +163,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8F708FC71C6E9D8C00246BCC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8F708FE01C6EA26C00246BCC /* WebRequest.swift in Sources */,
-				8F12138F1C73F5C90008A6D4 /* WebDelegate.swift in Sources */,
-				8F708FE31C6EA90500246BCC /* WebTask.swift in Sources */,
-				8F708FDD1C6EA19500246BCC /* WebService.swift in Sources */,
-				8F708FD11C6E9D8C00246BCC /* NetKitTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		8F708FCE1C6E9D8C00246BCC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8F708FC01C6E9D8C00246BCC /* NetKit */;
-			targetProxy = 8F708FCD1C6E9D8C00246BCC /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8F708FD31C6E9D8C00246BCC /* Debug */ = {
@@ -374,26 +299,6 @@
 			};
 			name = Release;
 		};
-		8F708FD91C6E9D8C00246BCC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = NetKitTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.azizuysal.NetKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		8F708FDA1C6E9D8C00246BCC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = NetKitTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.azizuysal.NetKitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -411,15 +316,6 @@
 			buildConfigurations = (
 				8F708FD61C6E9D8C00246BCC /* Debug */,
 				8F708FD71C6E9D8C00246BCC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8F708FD81C6E9D8C00246BCC /* Build configuration list for PBXNativeTarget "NetKitTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8F708FD91C6E9D8C00246BCC /* Debug */,
-				8F708FDA1C6E9D8C00246BCC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
