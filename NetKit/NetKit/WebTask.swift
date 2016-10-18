@@ -20,9 +20,8 @@ class Observer: NSObject {
   override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if keyPath == "operationCount" {
       if let queue = object as? OperationQueue, queue.operationCount == 0 {
-        if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
-          semaphore.signal()
-        }
+        let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee
+        semaphore?.signal()
       }
     }
   }
@@ -58,7 +57,7 @@ public class WebTask {
   fileprivate var taskResult: WebTaskResult?
   
   fileprivate var semaphore: DispatchSemaphore?
-  fileprivate var timeout: Int = -1
+  fileprivate var timeout: Double = -1
   
   fileprivate var authCount: Int = 0
   fileprivate var fileDownloadHandler: FileDownloadHandler?
@@ -109,8 +108,7 @@ extension WebTask {
     }
     
     if let semaphore = semaphore {
-      let time = DispatchTime.now() + Double(Int64(UInt64(timeout) * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)
-      let result = semaphore.wait(timeout: time)
+      let result = semaphore.wait(timeout: DispatchTime.now() + timeout)
       if result == DispatchTimeoutResult.timedOut && urlTask?.state != .completed {
         cancel()
       }
@@ -121,7 +119,7 @@ extension WebTask {
     return self
   }
   
-  @discardableResult public func resumeAndWait(_ timeout: Int = 0) -> Self {
+  @discardableResult public func resumeAndWait(_ timeout: Double = 0) -> Self {
     self.timeout = timeout
     if timeout > 0 {
       semaphore = DispatchSemaphore(value: 0)
