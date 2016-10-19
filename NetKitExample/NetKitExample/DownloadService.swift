@@ -24,12 +24,12 @@ extension DownloadServiceAPI {
 
 class DownloadService: DownloadServiceAPI {
   
-  fileprivate static let baseURL = "http://web4host.net"
+  fileprivate static let baseURL = "http://web4host.net/"
   let webService: WebService = {
     let configuration = URLSessionConfiguration.background(withIdentifier: "com.azizuysal.netkit.test")
     configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
     let service = WebService(urlString: baseURL, configuration: configuration)
-    return service
+    return service!
   }()
   
   static let FileDownloaded = "DownloadService.FileDownloaded"

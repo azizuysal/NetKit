@@ -55,7 +55,7 @@ public class WebService {
   public var taskSource: SessionTaskSource
   public var backgroundCompletionHandler: (() -> Void)?
   
-  fileprivate let urlString: String
+  fileprivate let url: URL
   fileprivate let webQueue = OperationQueue()
   
   fileprivate(set) var webDelegate: WebDelegate?
@@ -67,15 +67,19 @@ public class WebService {
     taskSource.invalidateAndCancel?()
   }
   
-  public convenience init(urlString: String) {
+  public convenience init?(urlString: String) {
     self.init(urlString: urlString, configuration: .default)
   }
   
-  public init(urlString: String, configuration: URLSessionConfiguration) {
+  public init?(urlString: String, configuration: URLSessionConfiguration) {
     
 //    method_exchangeImplementations(class_getInstanceMethod(URLSession.classForCoder(), "dataTaskWithRequest:completionHandler:"), class_getInstanceMethod(URLSession.classForCoder(), "nkDataTaskWithRequest:completionHandler:"))
     
-    self.urlString = urlString
+    guard let url = URL(string: urlString) else {
+      return nil
+    }
+    
+    self.url = url
     webDelegate = WebDelegate()
     taskSource = TaskSource.defaultSource(configuration, delegate: webDelegate, delegateQueue: webQueue)
     webDelegate?.webService = self
@@ -85,25 +89,18 @@ public class WebService {
 extension WebService {
   
   public func HEAD(_ path: String) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .HEAD, url: urlString.stringByAppendingPathComponent(path)), webService: self)
+    return WebTask(webRequest: WebRequest(method: .HEAD, url: url.appendingPathComponent(path)), webService: self)
   }
   public func GET(_ path: String, taskType: WebTask.TaskType = .data) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .GET, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
+    return WebTask(webRequest: WebRequest(method: .GET, url: url.appendingPathComponent(path)), webService: self, taskType: taskType)
   }
   public func POST(_ path: String, taskType: WebTask.TaskType = .data) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .POST, url: urlString.stringByAppendingPathComponent(path)), webService: self, taskType: taskType)
+    return WebTask(webRequest: WebRequest(method: .POST, url: url.appendingPathComponent(path)), webService: self, taskType: taskType)
   }
   public func PUT(_ path: String) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .PUT, url: urlString.stringByAppendingPathComponent(path)), webService: self)
+    return WebTask(webRequest: WebRequest(method: .PUT, url: url.appendingPathComponent(path)), webService: self)
   }
   public func DELETE(_ path: String) -> WebTask {
-    return WebTask(webRequest: WebRequest(method: .DELETE, url: urlString.stringByAppendingPathComponent(path)), webService: self)
-  }
-}
-
-extension String {
-  func stringByAppendingPathComponent(_ str: String) -> String {
-    let ns = self as NSString
-    return ns.appendingPathComponent(str)
+    return WebTask(webRequest: WebRequest(method: .DELETE, url: url.appendingPathComponent(path)), webService: self)
   }
 }

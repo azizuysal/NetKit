@@ -58,7 +58,7 @@ public struct WebRequest {
   }
   
   let method: Method
-  fileprivate(set) var url: String
+  fileprivate(set) var url: URL
   var body: Data?
   
   var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
@@ -75,7 +75,7 @@ public struct WebRequest {
   
   var restPath = "" {
     didSet {
-      url = url.stringByAppendingPathComponent(restPath)
+      url = url.appendingPathComponent(restPath)
     }
   }
   
@@ -86,7 +86,7 @@ public struct WebRequest {
   }
   
   var urlRequest: URLRequest {
-    let request = NSMutableURLRequest(url: URL(string: url)!)
+    let request = NSMutableURLRequest(url: url)
     request.httpMethod = method.rawValue
     request.cachePolicy = cachePolicy
     
@@ -116,7 +116,7 @@ public struct WebRequest {
     return request.copy() as! URLRequest
   }
   
-  public init(method: Method, url: String) {
+  public init(method: Method, url: URL) {
     self.method = method
     self.url = url
   }
