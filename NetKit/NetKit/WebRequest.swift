@@ -61,7 +61,7 @@ public struct WebRequest {
   fileprivate(set) var url: URL
   var body: Data?
   
-  var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
+  var cachePolicy = URLRequest.CachePolicy.useProtocolCachePolicy
   
   var urlParameters = [String:Any]()
   var bodyParameters = [String:Any]()

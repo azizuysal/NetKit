@@ -202,7 +202,7 @@ extension WebTask {
     return self
   }
   
-  public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
+  public func setCachePolicy(_ cachePolicy: URLRequest.CachePolicy) -> Self {
     webRequest.cachePolicy = cachePolicy
     return self
   }
