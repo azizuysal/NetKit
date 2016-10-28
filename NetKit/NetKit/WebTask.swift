@@ -20,8 +20,13 @@ class Observer: NSObject {
   override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if keyPath == "operationCount" {
       if let queue = object as? OperationQueue, queue.operationCount == 0 {
-        let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee
-        semaphore?.signal()
+        if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
+          semaphore.signal()
+        }
+//        if let context = context {
+//          let semaphore = Unmanaged<DispatchSemaphore>.fromOpaque(context).takeUnretainedValue()
+//          semaphore.signal()
+//        }
       }
     }
   }
@@ -83,7 +88,7 @@ extension WebTask {
   
   @discardableResult public func resume() -> Self {
     
-    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .new, context: &semaphore)
+    handlerQueue.addObserver(queueObserver, forKeyPath: "operationCount", options: .new, context: semaphore != nil ? UnsafeMutableRawPointer(Unmanaged<DispatchSemaphore>.passUnretained(semaphore!).toOpaque()) : nil)
     
     if urlTask == nil {
       switch taskType {
