@@ -40,7 +40,7 @@ extension JsonServiceAPI {
 
 class JsonService: JsonServiceAPI {
   
-  fileprivate static let baseURL = "http://localhost:3000/"
+  fileprivate static let baseURL = "http://localhost:3000"
   let webService = WebService(urlString: baseURL)!
   
   static let PostsDownloaded = "PostsDownloaded"

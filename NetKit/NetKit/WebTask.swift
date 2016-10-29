@@ -20,13 +20,13 @@ class Observer: NSObject {
   override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if keyPath == "operationCount" {
       if let queue = object as? OperationQueue, queue.operationCount == 0 {
-        if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
-          semaphore.signal()
-        }
-//        if let context = context {
-//          let semaphore = Unmanaged<DispatchSemaphore>.fromOpaque(context).takeUnretainedValue()
+//        if let semaphore = context?.assumingMemoryBound(to: DispatchSemaphore.self).pointee {
 //          semaphore.signal()
 //        }
+        if let context = context {
+          let semaphore = Unmanaged<DispatchSemaphore>.fromOpaque(context).takeUnretainedValue()
+          semaphore.signal()
+        }
       }
     }
   }

@@ -29,7 +29,7 @@ extension GlobalWeatherAPI {
 
 class GlobalWeatherService: GlobalWeatherAPI {
   
-  fileprivate static let baseURL = "http://www.webservicex.net/globalweather.asmx/"
+  fileprivate static let baseURL = "http://www.webservicex.net/globalweather.asmx"
   let webService = WebService(urlString: baseURL)!
   
   static let ReceivedCities = "ReceivedCities"
