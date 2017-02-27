@@ -150,6 +150,7 @@ extension Dictionary {
 
 extension String {
   var percentEncodeURLQueryCharacters: String? {
-    return self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    let allowedCharacterSet = CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted
+    return self.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet /*.urlQueryAllowed*/)
   }
 }
