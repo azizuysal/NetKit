@@ -49,6 +49,7 @@ class ServiceController {
   class func getPosts() {
     _ = networkQueueSerial.sync {
       jsonService.getPosts()
+        .setURLParameters(["dummy":"domain\\+dummy"])
         .responseJSON { json in
           print(json)
           notifyUser(JsonService.PostsDownloaded)
