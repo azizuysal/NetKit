@@ -124,7 +124,7 @@ public struct WebRequest {
 
 extension URLComponents {
   mutating func appendPercentEncodedQuery(_ query: String) {
-    percentEncodedQuery = percentEncodedQuery == nil ? query : "\(percentEncodedQuery)&\(query)"
+    percentEncodedQuery = percentEncodedQuery == nil ? query : "\(percentEncodedQuery ?? "")&\(query)"
   }
 }
 
