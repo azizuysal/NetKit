@@ -32,6 +32,9 @@ class DownloadService: DownloadServiceAPI {
     return service!
   }()
   
-  static let FileDownloaded = "DownloadService.FileDownloaded"
-  static let FileName = "DownloadService.FileName"
+  static let fileName = "DownloadService.FileName"
+}
+
+extension Notification.Name {
+  static let fileDownloaded = Notification.Name("DownloadService.FileDownloaded")
 }

@@ -1,6 +1,6 @@
-[![Language](https://img.shields.io/badge/Swift-3.0-orange.svg)](http://swift.org)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Language](https://img.shields.io/badge/Swift-4.1-orange.svg)](http://swift.org)
 [![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-brightgreen.svg)](https://cocoapods.org)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # NetKit
 
@@ -8,11 +8,20 @@ A Concise HTTP Framework in Swift.
 
 ## Requirements
 
-NetKit requires Swift 3.0 and Xcode 8.0.
-
-There is a `swift2` branch that supports Swift 2.3 and Xcode 7.3 if you're not ready to upgrade to Swift 3.
+NetKit requires Swift 4.1 and Xcode 9.0.
 
 ## Installation
+
+### CocoaPods
+
+You can use [CocoaPods](https://cocoapods.org) to integrate NetKit with your project.
+
+Simply add the following line to your `Podfile`:
+```ruby
+pod "NetKit"
+```
+
+And run `pod update` in your project directory.
 
 ### Carthage
 
@@ -32,17 +41,6 @@ github "azizuysal/NetKit"
 ```
 
 Run `carthage update` to build the framework and drag the built `NetKit.framework` into your Xcode project.
-
-### CocoaPods
-
-You can use [CocoaPods](https://cocoapods.org) to integrate NetKit with your project.
-
-Simply add the following line to your `Podfile`:
-```ruby
-pod "NetKit"
-```
-
-And run `pod update` in your project directory.
 
 ### Manually
 

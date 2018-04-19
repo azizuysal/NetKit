@@ -84,8 +84,6 @@ class ServiceWithDelegate: NSObject {
     urlSession = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     webService.taskSource = self
   }
-  
-  static let CommentsDownloaded = "CommentsDownloaded"
 }
 
 class Comment {
@@ -101,4 +99,8 @@ class Comment {
     json["body"] = body as AnyObject?
     return json
   }
+}
+
+extension Notification.Name {
+  static let commentsDownloaded = Notification.Name("ServiceWithDelegate.CommentsDownloaded")
 }

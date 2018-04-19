@@ -10,8 +10,8 @@ import Foundation
 import NetKit
 
 struct ServiceResult {
-  static let Success = "Success"
-  static let Error = "Error"
+  static let success = "success"
+  static let error = "error"
 }
 
 class ServiceController {
@@ -34,12 +34,12 @@ class ServiceController {
 //      .respondOnCurrentQueue(true)
       .responseJSON { json in
         result = json
-        notifyUser(JsonService.PostsDownloaded)
+        notifyUser(.postsDownloaded)
         return .success
       }
       .responseError { error in
         print(error)
-        notifyUser(JsonService.PostsDownloaded, error: error)
+        notifyUser(.postsDownloaded, error: error)
       }
       .resumeAndWait(1)
     
@@ -52,12 +52,12 @@ class ServiceController {
         .setURLParameters(["dummy":"domain\\+dummy"])
         .responseJSON { json in
           print(json)
-          notifyUser(JsonService.PostsDownloaded)
+          notifyUser(.postsDownloaded)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(JsonService.PostsDownloaded, error: error)
+          notifyUser(.postsDownloaded, error: error)
         }
         .resumeAndWait()
     }
@@ -69,12 +69,12 @@ class ServiceController {
         .setJSON(post.toJson())
         .responseJSON { json in
           print(json)
-          notifyUser(JsonService.PostsCreated)
+          notifyUser(.postsCreated)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(JsonService.PostsCreated, error: error)
+          notifyUser(.postsCreated, error: error)
         }
         .resume()
     }
@@ -87,12 +87,12 @@ class ServiceController {
         .setJSON(post.toJson())
         .responseJSON { json in
           print(json)
-          notifyUser(JsonService.PostsUpdated)
+          notifyUser(.postsUpdated)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(JsonService.PostsUpdated, error: error)
+          notifyUser(.postsUpdated, error: error)
         }
         .resume()
     }
@@ -105,12 +105,12 @@ class ServiceController {
       serviceWithDelegate.getComments()
         .responseJSON { json in
           print(json)
-          notifyUser(ServiceWithDelegate.CommentsDownloaded)
+          notifyUser(.commentsDownloaded)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(ServiceWithDelegate.CommentsDownloaded, error: error)
+          notifyUser(.commentsDownloaded, error: error)
         }
         .resume()
     }
@@ -125,12 +125,12 @@ class ServiceController {
         .setSOAP("<GetCitiesByCountry xmlns=\"http://www.webserviceX.NET\"><CountryName>\(country)</CountryName></GetCitiesByCountry>")
         .response { data, url, response in
 //          print(String(data: data!, encoding: NSUTF8StringEncoding))
-          notifyUser(GlobalWeatherService.ReceivedCities)
+          notifyUser(.receivedCities)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(GlobalWeatherService.ReceivedCities, error: error)
+          notifyUser(.receivedCities, error: error)
         }
         .resume()
     }
@@ -163,12 +163,12 @@ class ServiceController {
           } else {
             return .failure(WebServiceError.badData("File parameter is nil"))
           }
-          notifyUser(DownloadService.FileDownloaded, filename: response?.suggestedFilename)
+          notifyUser(.fileDownloaded, filename: response?.suggestedFilename)
           return .success
         }
         .responseError { error in
           print(error)
-          notifyUser(DownloadService.FileDownloaded, error: error)
+          notifyUser(.fileDownloaded, error: error)
         }
         .resumeAndWait()
     }
@@ -176,17 +176,17 @@ class ServiceController {
   
   // MARK: Private methods
   
-  fileprivate class func notifyUser(_ event: String, error: Error? = nil, filename: String? = nil) {
+  private class func notifyUser(_ event: Notification.Name, error: Error? = nil, filename: String? = nil) {
     var userInfo = [String:AnyObject]()
-    userInfo = [ServiceResult.Success:true as AnyObject]
+    userInfo = [ServiceResult.success:true as AnyObject]
     if let error = error {
-      userInfo[ServiceResult.Success] = false as AnyObject?
-      userInfo[ServiceResult.Error] = error as NSError
+      userInfo[ServiceResult.success] = false as AnyObject?
+      userInfo[ServiceResult.error] = error as NSError
     }
     if let filename = filename {
-      userInfo[DownloadService.FileName] = filename as AnyObject?
+      userInfo[DownloadService.fileName] = filename as AnyObject?
     }
-    NotificationCenter.default.post(name: Notification.Name(rawValue: event), object: nil, userInfo: userInfo)
+    NotificationCenter.default.post(name: event, object: nil, userInfo: userInfo)
   }
 }
 

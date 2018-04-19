@@ -42,11 +42,6 @@ class JsonService: JsonServiceAPI {
   
   fileprivate static let baseURL = "http://localhost:3000"
   let webService = WebService(urlString: baseURL)!
-  
-  static let PostsDownloaded = "PostsDownloaded"
-  static let PostsCreated = "PostsCreated"
-  static let PostsUpdated = "PostsUpdated"
-  static let PostsDeleted = "PostsDeleted"
 }
 
 class Post {
@@ -62,4 +57,11 @@ class Post {
     json["author"] = author as AnyObject?
     return json
   }
+}
+
+extension Notification.Name {
+  static let postsDownloaded = Notification.Name("JsonService.PostsDownloaded")
+  static let postsCreated = Notification.Name("JsonService.PostsCreated")
+  static let postsUpdated = Notification.Name("JsonService.PostsUpdated")
+  static let postsDeleted = Notification.Name("JsonService.PostsDeleted")
 }

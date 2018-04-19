@@ -11,26 +11,25 @@ import UIKit
 class ViewController: UIViewController {
   
   deinit {
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: DownloadService.FileDownloaded), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedWeather), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedCities), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ServiceWithDelegate.CommentsDownloaded), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsDownloaded), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsCreated), object: nil)
-    NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: JsonService.PostsUpdated), object: nil)
+    NotificationCenter.default.removeObserver(self, name: .fileDownloaded, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .receivedWeather, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .receivedCities, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .commentsDownloaded, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .postsDownloaded, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .postsCreated, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .postsUpdated, object: nil)
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    NotificationCenter.default.addObserver(self, selector: #selector(postsDownloaded(_:)), name: NSNotification.Name(rawValue: JsonService.PostsDownloaded), object: nil)
-    
-    NotificationCenter.default.addObserver(self, selector: #selector(postsCreated(_:)), name: NSNotification.Name(rawValue: JsonService.PostsCreated), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(postsUpdated(_:)), name: NSNotification.Name(rawValue: JsonService.PostsUpdated), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(commentsDownloaded(_:)), name: NSNotification.Name(rawValue: ServiceWithDelegate.CommentsDownloaded), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(receivedCities(_:)), name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedCities), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(receivedWeather(_:)), name: NSNotification.Name(rawValue: GlobalWeatherService.ReceivedWeather), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(fileDownloaded(_:)), name: NSNotification.Name(rawValue: DownloadService.FileDownloaded), object: nil)
+    NotificationCenter.default.addObserver(forName: .postsDownloaded, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .postsCreated, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .postsUpdated, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .commentsDownloaded, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .receivedCities, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .receivedWeather, object: nil, queue: nil, using: handleNotification(_:))
+    NotificationCenter.default.addObserver(forName: .fileDownloaded, object: nil, queue: nil, using: handleNotification(_:))
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -78,35 +77,13 @@ class ViewController: UIViewController {
     print("********* finished queueing *********")
   }
   
-  func postsDownloaded(_ notification: Notification) {
-    print("POSTS DOWNLOADED")
-  }
-  
-  func postsCreated(_ notification: Notification) {
-    print("POST CREATED")
-  }
-  
-  func postsUpdated(_ notification: Notification) {
-    print("POST UPDATED")
-  }
-  
-  func commentsDownloaded(_ notification: Notification) {
-    print("COMMENTS DOWNLOADED")
-  }
-  
-  func receivedCities(_ notification: Notification) {
-    print("RECEIVED CITIES")
-  }
-  
-  func receivedWeather(_ notification: Notification) {
-    print("RECEIVED WEATHER")
-  }
-  
-  func fileDownloaded(_ notification: Notification) {
-    if let userInfo = (notification as NSNotification).userInfo, let filename = userInfo[DownloadService.FileName] {
-      print("FILE DOWNLOADED: \(filename)")
+  private func handleNotification(_ notification: Notification) {
+    if let error = notification.userInfo?[ServiceResult.error] {
+      print("\(notification.name.rawValue) error: \(error)")
+    } else if let filename = notification.userInfo?[DownloadService.fileName] {
+      print("\(notification.name.rawValue) file downloaded: \(filename)")
     } else {
-      print("FILE DOWNLOADED")
+      print("\(notification.name.rawValue) was successful")
     }
   }
 }

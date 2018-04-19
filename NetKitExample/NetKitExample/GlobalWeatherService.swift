@@ -31,7 +31,9 @@ class GlobalWeatherService: GlobalWeatherAPI {
   
   fileprivate static let baseURL = "http://www.webservicex.net/globalweather.asmx"
   let webService = WebService(urlString: baseURL)!
-  
-  static let ReceivedCities = "ReceivedCities"
-  static let ReceivedWeather = "ReceivedWeather"
+}
+
+extension Notification.Name {
+  static let receivedCities = Notification.Name("GlobalWeather.ReceivedCities")
+  static let receivedWeather = Notification.Name("GlobalWeather.ReceivedWeather")
 }
