@@ -10,6 +10,7 @@ s.social_media_url = 'https://twitter.com/azizuysal'
 s.source           = { :git => "https://github.com/azizuysal/NetKit.git", :tag => s.version.to_s }
 s.platform         = :ios, '10.0'
 s.requires_arc     = true
+s.swift_version	   = '4.2'
 
 # If more than one source file: https://guides.cocoapods.org/syntax/podspec.html#source_files
 s.source_files = 'NetKit/NetKit/*.{swift}'
