@@ -16,14 +16,14 @@ struct ServiceResult {
 
 class ServiceController {
   
-  fileprivate static let jsonService = JsonService()
-  fileprivate static let serviceWithDelegate = ServiceWithDelegate()
-  fileprivate static let weatherService = GlobalWeatherService()
-  fileprivate static let downloadService = DownloadService()
+  private static let jsonService = JsonService()
+  private static let serviceWithDelegate = ServiceWithDelegate()
+  private static let weatherService = GlobalWeatherService()
+  private static let downloadService = DownloadService()
   
-  fileprivate static let networkQueueSerial = DispatchQueue(label: "networkQueueSerial", attributes: [])
-  fileprivate static let networkQueueParallel = DispatchQueue(label: "networkQueueParallel", attributes: DispatchQueue.Attributes.concurrent)
-  fileprivate static let downloadQueue = DispatchQueue(label: "downloadQueue", attributes: [])
+  private static let networkQueueSerial = DispatchQueue(label: "networkQueueSerial", attributes: [])
+  private static let networkQueueParallel = DispatchQueue(label: "networkQueueParallel", attributes: DispatchQueue.Attributes.concurrent)
+  private static let downloadQueue = DispatchQueue(label: "downloadQueue", attributes: [])
   
   // MARK: ExampleService
   

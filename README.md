@@ -1,4 +1,4 @@
-[![Language](https://img.shields.io/badge/Swift-4.1-orange.svg)](http://swift.org)
+[![Language](https://img.shields.io/badge/Swift-4.2-orange.svg)](http://swift.org)
 [![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-brightgreen.svg)](https://cocoapods.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
@@ -8,7 +8,7 @@ A Concise HTTP Framework in Swift.
 
 ## Requirements
 
-NetKit requires Swift 4.1 and Xcode 9.0.
+NetKit requires Swift 4.2 and Xcode 10.
 
 ## Installation
 

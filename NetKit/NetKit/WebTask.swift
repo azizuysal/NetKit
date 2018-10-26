@@ -43,29 +43,29 @@ public class WebTask {
   public typealias FileDownloadHandler = (URL?, URLResponse?) -> WebTaskResult
   public typealias ErrorHandler = (Error) -> Void
   
-  fileprivate let queueObserver = Observer()
-  fileprivate let handlerQueue: OperationQueue = {
+  private let queueObserver = Observer()
+  private let handlerQueue: OperationQueue = {
     let queue = OperationQueue()
     queue.maxConcurrentOperationCount = 1
     queue.isSuspended = true
     return queue
   }()
   
-  fileprivate var webRequest: WebRequest
-  fileprivate weak var webService: WebService?
-  fileprivate let taskType: TaskType
-  fileprivate var urlTask: URLSessionTask?
+  private var webRequest: WebRequest
+  private weak var webService: WebService?
+  private let taskType: TaskType
+  private var urlTask: URLSessionTask?
   
-  fileprivate var urlResponse: URLResponse?
-  fileprivate var responseData: Data?
-  fileprivate var responseURL: URL?
-  fileprivate var taskResult: WebTaskResult?
+  private var urlResponse: URLResponse?
+  private var responseData: Data?
+  private var responseURL: URL?
+  private var taskResult: WebTaskResult?
   
-  fileprivate var semaphore: DispatchSemaphore?
-  fileprivate var timeout: Double = -1
+  private var semaphore: DispatchSemaphore?
+  private var timeout: Double = -1
   
-  fileprivate var authCount: Int = 0
-  fileprivate var fileDownloadHandler: FileDownloadHandler?
+  private var authCount: Int = 0
+  private var fileDownloadHandler: FileDownloadHandler?
   
 //  private var useOriginQueue = false
 //  private let originQueue: NSOperationQueue = {
@@ -140,7 +140,7 @@ extension WebTask {
     urlTask?.cancel()
   }
   
-  fileprivate func handleResponse(_ data: Data? = nil, location: URL? = nil, response: URLResponse?, error: Error?) {
+  private func handleResponse(_ data: Data? = nil, location: URL? = nil, response: URLResponse?, error: Error?) {
     urlResponse = response
     responseData = data
     responseURL = location

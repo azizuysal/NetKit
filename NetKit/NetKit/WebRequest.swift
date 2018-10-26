@@ -58,7 +58,7 @@ public struct WebRequest {
   }
   
   let method: Method
-  fileprivate(set) var url: URL
+  private(set) var url: URL
   var body: Data?
   
   var cachePolicy = URLRequest.CachePolicy.useProtocolCachePolicy

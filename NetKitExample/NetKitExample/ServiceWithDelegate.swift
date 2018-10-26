@@ -67,7 +67,7 @@ extension ServiceWithDelegate: URLSessionDownloadDelegate {
 
 class ServiceWithDelegate: NSObject {
   
-  fileprivate static let baseURL = "http://localhost:3000"
+  private static let baseURL = "http://localhost:3000"
   let webService = WebService(urlString: baseURL)!
   
   var urlSession: Foundation.URLSession!
