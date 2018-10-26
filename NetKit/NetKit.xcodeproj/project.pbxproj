@@ -12,18 +12,31 @@
 		8F708FDC1C6EA19500246BCC /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDB1C6EA19500246BCC /* WebService.swift */; };
 		8F708FDF1C6EA26C00246BCC /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FDE1C6EA26C00246BCC /* WebRequest.swift */; };
 		8F708FE21C6EA90500246BCC /* WebTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FE11C6EA90500246BCC /* WebTask.swift */; };
+		8FA31E8D218393B000771FB8 /* NetKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA31E8C218393B000771FB8 /* NetKitTests.swift */; };
+		8FA31E8F218393B000771FB8 /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F708FC11C6E9D8C00246BCC /* NetKit.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8FA31E90218393B000771FB8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F708FB81C6E9D8C00246BCC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F708FC01C6E9D8C00246BCC;
+			remoteInfo = NetKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8F12138D1C73F5C90008A6D4 /* WebDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebDelegate.swift; sourceTree = "<group>"; };
 		8F708FC11C6E9D8C00246BCC /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F708FC41C6E9D8C00246BCC /* NetKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetKit.h; sourceTree = "<group>"; };
 		8F708FC61C6E9D8C00246BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8F708FD01C6E9D8C00246BCC /* NetKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetKitTests.swift; sourceTree = "<group>"; };
-		8F708FD21C6E9D8C00246BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F708FDB1C6EA19500246BCC /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		8F708FDE1C6EA26C00246BCC /* WebRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
 		8F708FE11C6EA90500246BCC /* WebTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebTask.swift; sourceTree = "<group>"; };
+		8FA31E8A218393B000771FB8 /* NetKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FA31E8C218393B000771FB8 /* NetKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetKitTests.swift; sourceTree = "<group>"; };
+		8FA31E8E218393B000771FB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +47,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8FA31E87218393B000771FB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FA31E8F218393B000771FB8 /* NetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -41,7 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				8F708FC31C6E9D8C00246BCC /* NetKit */,
-				8F708FCF1C6E9D8C00246BCC /* NetKitTests */,
+				8FA31E8B218393B000771FB8 /* NetKitTests */,
 				8F708FC21C6E9D8C00246BCC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				8F708FC11C6E9D8C00246BCC /* NetKit.framework */,
+				8FA31E8A218393B000771FB8 /* NetKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,11 +89,11 @@
 			path = NetKit;
 			sourceTree = "<group>";
 		};
-		8F708FCF1C6E9D8C00246BCC /* NetKitTests */ = {
+		8FA31E8B218393B000771FB8 /* NetKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				8F708FD01C6E9D8C00246BCC /* NetKitTests.swift */,
-				8F708FD21C6E9D8C00246BCC /* Info.plist */,
+				8FA31E8C218393B000771FB8 /* NetKitTests.swift */,
+				8FA31E8E218393B000771FB8 /* Info.plist */,
 			);
 			path = NetKitTests;
 			sourceTree = "<group>";
@@ -108,19 +130,41 @@
 			productReference = 8F708FC11C6E9D8C00246BCC /* NetKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		8FA31E89218393B000771FB8 /* NetKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FA31E94218393B000771FB8 /* Build configuration list for PBXNativeTarget "NetKitTests" */;
+			buildPhases = (
+				8FA31E86218393B000771FB8 /* Sources */,
+				8FA31E87218393B000771FB8 /* Frameworks */,
+				8FA31E88218393B000771FB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8FA31E91218393B000771FB8 /* PBXTargetDependency */,
+			);
+			name = NetKitTests;
+			productName = NetKitTests;
+			productReference = 8FA31E8A218393B000771FB8 /* NetKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		8F708FB81C6E9D8C00246BCC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Aziz Uysal";
 				TargetAttributes = {
 					8F708FC01C6E9D8C00246BCC = {
 						CreatedOnToolsVersion = 7.2.1;
 						LastSwiftMigration = 0930;
+					};
+					8FA31E89218393B000771FB8 = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -137,12 +181,20 @@
 			projectRoot = "";
 			targets = (
 				8F708FC01C6E9D8C00246BCC /* NetKit */,
+				8FA31E89218393B000771FB8 /* NetKitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8F708FBF1C6E9D8C00246BCC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FA31E88218393B000771FB8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -163,7 +215,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8FA31E86218393B000771FB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FA31E8D218393B000771FB8 /* NetKitTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8FA31E91218393B000771FB8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F708FC01C6E9D8C00246BCC /* NetKit */;
+			targetProxy = 8FA31E90218393B000771FB8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8F708FD31C6E9D8C00246BCC /* Debug */ = {
@@ -315,6 +383,54 @@
 			};
 			name = Release;
 		};
+		8FA31E92218393B000771FB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = NetKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.azizuysal.NetKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8FA31E93218393B000771FB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = NetKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.azizuysal.NetKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -332,6 +448,15 @@
 			buildConfigurations = (
 				8F708FD61C6E9D8C00246BCC /* Debug */,
 				8F708FD71C6E9D8C00246BCC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8FA31E94218393B000771FB8 /* Build configuration list for PBXNativeTarget "NetKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FA31E92218393B000771FB8 /* Debug */,
+				8FA31E93218393B000771FB8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

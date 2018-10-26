@@ -21,14 +21,14 @@
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8F708FCA1C6E9D8C00246BCC"
+               BlueprintIdentifier = "8FA31E89218393B000771FB8"
                BuildableName = "NetKitTests.xctest"
                BlueprintName = "NetKitTests"
                ReferencedContainer = "container:NetKit.xcodeproj">
@@ -42,6 +42,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8FA31E89218393B000771FB8"
+               BuildableName = "NetKitTests.xctest"
+               BlueprintName = "NetKitTests"
+               ReferencedContainer = "container:NetKit.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

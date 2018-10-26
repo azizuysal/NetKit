@@ -1,6 +1,6 @@
 //
-//  NetKitTests.swift
-//  NetKitTests
+//  NetKitExampleTests.swift
+//  NetKitExampleTests
 //
 //  Created by Aziz Uysal on 10/26/18.
 //  Copyright © 2018 Aziz Uysal. All rights reserved.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class NetKitTests: XCTestCase {
+class NetKitExampleTests: XCTestCase {
   
   override func setUp() {
     // Put setup code here. This method is called before the invocation of each test method in the class.
