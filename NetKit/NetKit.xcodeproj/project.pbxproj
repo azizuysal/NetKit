@@ -14,8 +14,6 @@
 		8F708FE21C6EA90500246BCC /* WebTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F708FE11C6EA90500246BCC /* WebTask.swift */; };
 		8FA31E8D218393B000771FB8 /* NetKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA31E8C218393B000771FB8 /* NetKitTests.swift */; };
 		8FA31E8F218393B000771FB8 /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F708FC11C6E9D8C00246BCC /* NetKit.framework */; };
-		8FEB76D1226F932300665FA2 /* NetKit.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 8FEB76D0226F932300665FA2 /* NetKit.podspec */; };
-		8FEB76D3226F932B00665FA2 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 8FEB76D2226F932B00665FA2 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -198,8 +196,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FEB76D3226F932B00665FA2 /* README.md in Resources */,
-				8FEB76D1226F932300665FA2 /* NetKit.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
