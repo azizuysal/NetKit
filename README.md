@@ -8,7 +8,7 @@ A Concise HTTP Framework in Swift.
 
 ## Requirements
 
-NetKit requires Swift 4.2 and Xcode 10.
+NetKit requires Swift 5.0 and Xcode 10.2
 
 ## Installation
 

@@ -59,7 +59,7 @@ public class WebService {
   fileprivate let webQueue = OperationQueue()
   
   fileprivate(set) var webDelegate: WebDelegate?
-  internal(set) var authenticationHandler: AuthenticationHandler?
+  var authenticationHandler: AuthenticationHandler?
   
   public var maxAuthRetry: Int = 0
   
