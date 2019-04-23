@@ -28,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		8F12138D1C73F5C90008A6D4 /* WebDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebDelegate.swift; sourceTree = "<group>"; };
+		8F3D6A80226FB2B50029FDC3 /* .travis.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .travis.yml; path = ../.travis.yml; sourceTree = "<group>"; };
 		8F708FC11C6E9D8C00246BCC /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F708FC41C6E9D8C00246BCC /* NetKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetKit.h; sourceTree = "<group>"; };
 		8F708FC61C6E9D8C00246BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -65,6 +66,7 @@
 			children = (
 				8FEB76D0226F932300665FA2 /* NetKit.podspec */,
 				8FEB76D2226F932B00665FA2 /* README.md */,
+				8F3D6A80226FB2B50029FDC3 /* .travis.yml */,
 				8F708FC31C6E9D8C00246BCC /* NetKit */,
 				8FA31E8B218393B000771FB8 /* NetKitTests */,
 				8F708FC21C6E9D8C00246BCC /* Products */,
